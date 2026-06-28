@@ -7,9 +7,27 @@ const fs        = require('fs');
 const path      = require('path');
 
 // ── CONFIG ────────────────────────────────────────────────────────
-const PORT       = process.env.PORT || 3001;
-const JWT_SECRET = 'tacogiro_secret_2026';
-const DB_FILE    = path.join(__dirname, 'tacogiro-db.json');
+const PORT           = process.env.PORT || 3001;
+const JWT_SECRET     = 'tacogiro_secret_2026';
+const DB_FILE        = path.join(__dirname, 'tacogiro-db.json');
+const TG_TOKEN       = process.env.TELEGRAM_TOKEN   || '';
+const TG_CHAT_ID     = process.env.TELEGRAM_CHAT_ID || '';
+
+// ── TELEGRAM ──────────────────────────────────────────────────────
+function sendTelegram(texto) {
+  if (!TG_TOKEN || !TG_CHAT_ID) return;
+  const body = JSON.stringify({ chat_id: TG_CHAT_ID, text: texto, parse_mode: 'HTML' });
+  const opts = {
+    hostname: 'api.telegram.org',
+    path: `/bot${TG_TOKEN}/sendMessage`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
+  };
+  const req = require('https').request(opts);
+  req.on('error', e => console.warn('Telegram error:', e.message));
+  req.write(body);
+  req.end();
+}
 
 // Admin credentials — cambiar aquí si se quiere otra contraseña
 const ADMIN = { usuario: 'admin', password: 'tacogiro2026', nombre: 'Taco Giro Admin' };
@@ -93,6 +111,17 @@ app.post('/api/pedidos', (req, res) => {
   saveDB();
   io.emit('nuevo_pedido', pedido);
 
+  const itemsTexto = pedido.items.map(i => `  • ${i.cantidad}× ${i.nombre} — $${i.subtotal}`).join('\n');
+  sendTelegram(
+    `🔴 <b>NUEVO PEDIDO ${pedido.numero_orden}</b>\n\n` +
+    `👤 ${pedido.cliente_nombre}\n` +
+    `📞 ${pedido.cliente_telefono}\n` +
+    `📍 ${pedido.cliente_direccion}\n` +
+    (pedido.cliente_notas ? `🗒️ ${pedido.cliente_notas}\n` : '') +
+    `\n${itemsTexto}\n\n` +
+    `💰 <b>Total: $${pedido.total} MXN</b>`
+  );
+
   res.json({
     success:       true,
     numero_orden:  pedido.numero_orden,
@@ -155,6 +184,16 @@ app.post('/api/reservaciones', (req, res) => {
   db.reservaciones.push(reserva);
   saveDB();
   io.emit('nueva_reservacion', reserva);
+
+  sendTelegram(
+    `📅 <b>NUEVA RESERVACIÓN ${reserva.numero_reserva}</b>\n\n` +
+    `👤 ${reserva.cliente_nombre}\n` +
+    `📞 ${reserva.cliente_telefono}\n` +
+    `📅 ${reserva.fecha_reserva} a las ${reserva.hora_reserva}\n` +
+    `👥 ${reserva.numero_personas} persona(s)\n` +
+    (reserva.mesa_preferencia ? `🪑 ${reserva.mesa_preferencia}\n` : '') +
+    (reserva.notas ? `🗒️ ${reserva.notas}` : '')
+  );
 
   res.json({
     success:        true,
