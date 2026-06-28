@@ -132,6 +132,26 @@ a{text-decoration:none;color:inherit}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .card.nueva{animation:blink .6s ease 3}
 
+/* ── HISTORIAL ───────────────────────────────────────────── */
+.hist-filters{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.85rem}
+.hf-btn{padding:.45rem .85rem;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--surf2);border:1px solid var(--bd);color:var(--cream3);cursor:pointer;transition:all .2s}
+.hf-btn.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.hist-resumen{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.85rem}
+.hr-box{background:var(--surf2);border:1px solid var(--bd);padding:.75rem .5rem;text-align:center}
+.hr-n{font-size:1.35rem;font-weight:700;color:var(--gold);line-height:1}
+.hr-l{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cream3);margin-top:.2rem}
+.hist-section-title{font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cream3);padding:.5rem 0 .5rem;border-bottom:1px solid var(--bd);margin-bottom:.5rem}
+.hist-row{display:flex;align-items:center;gap:.6rem;padding:.65rem .75rem;background:var(--surf);border:1px solid var(--bd);border-left:3px solid;margin-bottom:.35rem;font-size:.82rem}
+.hist-row.hr-entregado{border-left-color:var(--green)}
+.hist-row.hr-cancelado,.hist-row.hr-cancelada,.hist-row.hr-no_presento{border-left-color:var(--gray);opacity:.6}
+.hist-row.hr-confirmada{border-left-color:var(--green)}
+.hist-row.hr-pendiente{border-left-color:var(--red)}
+.hr-num{font-size:.72rem;font-weight:700;color:var(--cream3);white-space:nowrap;flex-shrink:0}
+.hr-name{flex:1;color:var(--cream);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hr-total{color:var(--gold);font-weight:700;white-space:nowrap;flex-shrink:0}
+.hr-fecha{font-size:.68rem;color:var(--cream3);white-space:nowrap;flex-shrink:0}
+.hr-chip{font-size:.58rem;font-weight:700;padding:.15rem .45rem;border-radius:2px;white-space:nowrap;flex-shrink:0}
+
 /* ── RESPONSIVE ──────────────────────────────────────────── */
 @media(min-width:600px){
   #content{max-width:700px;margin:0 auto;width:100%}
@@ -173,11 +193,14 @@ a{text-decoration:none;color:inherit}
   </div>
 
   <div id="tabBar">
-    <button class="tab-btn on" id="tabBtnPedidos"     onclick="switchTab('pedidos')">
+    <button class="tab-btn on" id="tabBtnPedidos"       onclick="switchTab('pedidos')">
       Pedidos <span class="tab-badge" id="badgePedidos"></span>
     </button>
     <button class="tab-btn"    id="tabBtnReservaciones" onclick="switchTab('reservaciones')">
-      Reservaciones <span class="tab-badge" id="badgeReservas"></span>
+      Reservas <span class="tab-badge" id="badgeReservas"></span>
+    </button>
+    <button class="tab-btn"    id="tabBtnHistorial"     onclick="switchTab('historial')">
+      Historial
     </button>
   </div>
 
@@ -187,6 +210,23 @@ a{text-decoration:none;color:inherit}
     </div>
     <div class="tab-section" id="secReservaciones">
       <div class="empty-state" id="emptyReservas"><div class="eico">📅</div>Sin reservaciones</div>
+    </div>
+    <div class="tab-section" id="secHistorial">
+      <div class="hist-filters">
+        <button class="hf-btn on" onclick="setFiltro('hoy',this)">Hoy</button>
+        <button class="hf-btn"    onclick="setFiltro('ayer',this)">Ayer</button>
+        <button class="hf-btn"    onclick="setFiltro('7dias',this)">7 días</button>
+        <button class="hf-btn"    onclick="setFiltro('todo',this)">Todo</button>
+      </div>
+      <div class="hist-resumen">
+        <div class="hr-box"><div class="hr-n" id="hPedidos">0</div><div class="hr-l">Pedidos</div></div>
+        <div class="hr-box"><div class="hr-n" id="hVentas">$0</div><div class="hr-l">Ventas</div></div>
+        <div class="hr-box"><div class="hr-n" id="hReservas">0</div><div class="hr-l">Reservas</div></div>
+      </div>
+      <div class="hist-section-title">Pedidos</div>
+      <div id="histPedidosList"><div class="empty-state" style="padding:2rem"><div class="eico">🌮</div>Sin registros</div></div>
+      <div class="hist-section-title" style="margin-top:.85rem">Reservaciones</div>
+      <div id="histReservasList"><div class="empty-state" style="padding:2rem"><div class="eico">📅</div>Sin registros</div></div>
     </div>
   </div>
 </div>
@@ -529,10 +569,88 @@ function updateStats() {
 // ── TABS ──────────────────────────────────────────────────────────
 function switchTab(tab) {
   curTab = tab;
-  document.getElementById('tabBtnPedidos').classList.toggle('on', tab==='pedidos');
-  document.getElementById('tabBtnReservaciones').classList.toggle('on', tab==='reservaciones');
-  document.getElementById('secPedidos').classList.toggle('on', tab==='pedidos');
-  document.getElementById('secReservaciones').classList.toggle('on', tab==='reservaciones');
+  ['pedidos','reservaciones','historial'].forEach(t => {
+    document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('on', t===tab);
+    document.getElementById('sec'    + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('on', t===tab);
+  });
+  if (tab === 'historial') renderHistorial();
+}
+
+// ── HISTORIAL ─────────────────────────────────────────────────────
+let filtroActivo = 'hoy';
+
+function setFiltro(f, btn) {
+  filtroActivo = f;
+  document.querySelectorAll('.hf-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderHistorial();
+}
+
+function fechaInicio(filtro) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  if (filtro === 'hoy')   return hoy;
+  if (filtro === 'ayer')  { const d = new Date(hoy); d.setDate(d.getDate()-1); return d; }
+  if (filtro === '7dias') { const d = new Date(hoy); d.setDate(d.getDate()-6); return d; }
+  return new Date(0);
+}
+function fechaFin(filtro) {
+  if (filtro === 'ayer') { const d = new Date(); d.setHours(0,0,0,0); return d; }
+  return new Date();
+}
+
+function renderHistorial() {
+  const desde = fechaInicio(filtroActivo);
+  const hasta = fechaFin(filtroActivo);
+
+  const pFiltrados = pedidos.filter(p => {
+    const f = new Date(p.fecha_creacion);
+    return f >= desde && f <= hasta;
+  });
+  const rFiltradas = reservaciones.filter(r => {
+    const f = new Date(r.fecha_creacion);
+    return f >= desde && f <= hasta;
+  });
+
+  const totalVentas = pFiltrados.filter(p => p.estado === 'entregado').reduce((s,p) => s + (p.total||0), 0);
+  document.getElementById('hPedidos').textContent  = pFiltrados.length;
+  document.getElementById('hVentas').textContent   = '$' + totalVentas;
+  document.getElementById('hReservas').textContent = rFiltradas.length;
+
+  const pl = document.getElementById('histPedidosList');
+  if (!pFiltrados.length) {
+    pl.innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="eico">🌮</div>Sin pedidos en este período</div>';
+  } else {
+    pl.innerHTML = pFiltrados.map(p => {
+      const fecha = new Date(p.fecha_creacion).toLocaleDateString('es-MX',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      const chip  = LABELS[p.estado] || p.estado;
+      const chipColor = {entregado:'background:var(--green);color:#fff',cancelado:'background:var(--gray);color:#ccc',pendiente:'background:var(--red);color:#fff',en_preparacion:'background:var(--orange);color:#000',listo:'background:var(--blue);color:#fff',en_camino:'background:var(--purple);color:#fff'}[p.estado]||'';
+      return `<div class="hist-row hr-${p.estado}">
+        <span class="hr-num">${p.numero_orden}</span>
+        <span class="hr-name">${p.cliente_nombre}</span>
+        <span class="hr-chip" style="${chipColor}">${chip}</span>
+        <span class="hr-total">$${p.total}</span>
+        <span class="hr-fecha">${fecha}</span>
+      </div>`;
+    }).join('');
+  }
+
+  const rl = document.getElementById('histReservasList');
+  if (!rFiltradas.length) {
+    rl.innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="eico">📅</div>Sin reservaciones en este período</div>';
+  } else {
+    rl.innerHTML = rFiltradas.map(r => {
+      const fecha = new Date(r.fecha_creacion).toLocaleDateString('es-MX',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      const chip  = LABELS[r.estado] || r.estado;
+      const chipColor = {confirmada:'background:var(--green);color:#fff',cancelada:'background:var(--gray);color:#ccc',pendiente:'background:var(--red);color:#fff',no_presento:'background:var(--gray);color:#ccc'}[r.estado]||'';
+      return `<div class="hist-row hr-${r.estado}">
+        <span class="hr-num">${r.numero_reserva}</span>
+        <span class="hr-name">${r.cliente_nombre}</span>
+        <span class="hr-chip" style="${chipColor}">${chip}</span>
+        <span class="hr-total">${r.numero_personas} pax</span>
+        <span class="hr-fecha">${r.fecha_reserva} ${r.hora_reserva}</span>
+      </div>`;
+    }).join('');
+  }
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────
