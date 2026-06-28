@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taco Giro — Heroica Nogales, Sonora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #080603;
+      --surf:    #100E0A;
+      --surf2:   #181410;
+      --surf3:   #201B16;
+      --gold:    #C9A84C;
+      --gold2:   #DFC268;
+      --cream:   #F0EBE2;
+      --cream2:  rgba(240,235,226,.65);
+      --cream3:  rgba(240,235,226,.32);
+      --wine:    #6B1420;
+      --bd:      rgba(240,235,226,.08);
+      --bdg:     rgba(201,168,76,.2);
+      --fh:      'Cormorant Garamond', Georgia, serif;
+      --fb:      'DM Sans', system-ui, sans-serif;
+      --ease:    cubic-bezier(.4,0,.2,1);
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;font-size:16px}
+    body{font-family:var(--fb);background:var(--bg);color:var(--cream);overflow-x:hidden}
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+    img{display:block;width:100%;height:100%;object-fit:cover}
+    a{text-decoration:none;color:inherit}
+
+    /* ── LOADER ─────────────────────────────────────────────── */
+    #loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .6s var(--ease),visibility .6s var(--ease)}
+    #loader.out{opacity:0;visibility:hidden}
+    .ld-name{font-family:var(--fh);font-size:3.2rem;font-weight:300;letter-spacing:.35em;color:var(--cream);text-transform:uppercase;animation:ldpulse 1.4s ease infinite}
+    .ld-sub{font-size:.65rem;letter-spacing:.45em;color:var(--gold);text-transform:uppercase;margin-top:.5rem;font-weight:500}
+    .ld-line{width:140px;height:1px;background:var(--bd);margin-top:2.5rem;overflow:hidden;position:relative}
+    .ld-fill{position:absolute;top:0;left:0;height:100%;background:var(--gold);animation:ldfill 1.5s ease forwards}
+    @keyframes ldpulse{0%,100%{opacity:1}50%{opacity:.5}}
+    @keyframes ldfill{from{width:0}to{width:100%}}
+
+    /* ── NAV ─────────────────────────────────────────────────── */
+    #nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2.5rem;transition:all .4s var(--ease)}
+    #nav.stuck{background:rgba(8,6,3,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:1rem 2.5rem;border-bottom:1px solid var(--bd)}
+    .nav-logo{font-family:var(--fh);font-size:1.5rem;font-weight:500;letter-spacing:.2em;color:var(--cream);text-transform:uppercase}
+    .nav-logo em{color:var(--gold);font-style:normal}
+    .nav-links{display:flex;gap:2.5rem;list-style:none}
+    .nav-links a{font-size:.7rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--cream3);transition:color .3s ease;position:relative}
+    .nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s ease}
+    .nav-links a:hover{color:var(--cream)}
+    .nav-links a:hover::after{width:100%}
+    .nav-r{display:flex;align-items:center;gap:1.25rem}
+    .nav-cart-btn{display:flex;align-items:center;gap:.5rem;font-size:.7rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);background:none;border:1px solid var(--bd);border-radius:0;padding:.5rem 1rem;cursor:pointer;transition:all .3s ease;font-family:var(--fb)}
+    .nav-cart-btn:hover{color:var(--gold);border-color:var(--gold)}
+    .cbadge{background:var(--gold);color:var(--bg);font-size:.65rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .hamburger span{display:block;width:22px;height:1px;background:var(--cream);transition:all .3s ease}
+    .mob-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;backdrop-filter:blur(6px)}
+    .mob-ov.open{display:block}
+    .mob-menu{position:fixed;top:0;right:-300px;width:280px;height:100vh;background:var(--surf2);z-index:1001;padding:5rem 2rem 2rem;transition:right .3s var(--ease);border-left:1px solid var(--bd)}
+    .mob-menu.open{right:0}
+    .mob-menu a{display:block;padding:.85rem 0;font-size:.75rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--cream2);border-bottom:1px solid var(--bd);transition:all .25s ease}
+    .mob-menu a:hover{color:var(--gold);padding-left:.4rem}
+
+    /* ── HERO ─────────────────────────────────────────────────── */
+    #hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center}
+    .hero-bg{position:absolute;inset:0;overflow:hidden}
+    .hero-slides{position:absolute;inset:0}
+    .hslide{position:absolute;inset:0;background-size:cover;background-position:center 40%;opacity:0;transition:opacity 1.8s ease;filter:brightness(.42) saturate(1.08)}
+    .hslide.on{opacity:1}
+    .hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,6,3,.8) 0%,rgba(8,6,3,.35) 55%,rgba(8,6,3,.12) 100%);z-index:2}
+    .hero-content{position:relative;z-index:3;padding:2rem 1.5rem;max-width:860px;text-align:center}
+    .hero-eyebrow{font-size:.65rem;font-weight:500;letter-spacing:.45em;color:var(--gold);text-transform:uppercase;margin-bottom:2rem;animation:fadeU .8s ease .2s both}
+    .hero-title{font-family:var(--fh);font-size:clamp(3.8rem,10vw,9rem);font-weight:300;line-height:.92;color:var(--cream);letter-spacing:.04em;margin-bottom:1.8rem;animation:fadeU .8s ease .4s both}
+    .hero-title span{color:var(--gold)}
+    .hero-title em{font-style:italic;color:var(--cream2)}
+    .hero-desc{font-size:.88rem;color:var(--cream2);font-weight:300;line-height:1.85;max-width:500px;margin:0 auto 2.5rem;animation:fadeU .8s ease .6s both}
+    .hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeU .8s ease .8s both}
+    .btn-outline-gold{padding:.75rem 2rem;border:1px solid var(--gold);color:var(--gold);font-family:var(--fb);font-size:.7rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s ease;background:none;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-outline-gold:hover{background:var(--gold);color:var(--bg)}
+    .btn-outline-cream{padding:.75rem 2rem;border:1px solid rgba(240,235,226,.3);color:var(--cream2);font-family:var(--fb);font-size:.7rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .3s ease;background:none;display:inline-flex;align-items:center;gap:.5rem}
+    .btn-outline-cream:hover{border-color:var(--cream);color:var(--cream)}
+    .hero-scroll{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6rem;color:var(--cream3);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;animation:fadeU .8s ease 1.2s both;cursor:pointer;white-space:nowrap}
+    .hero-scroll::before{content:'';width:1px;height:50px;background:linear-gradient(to bottom,transparent,var(--cream3));animation:scrollline 2s ease infinite}
+    @keyframes scrollline{0%,100%{opacity:0;transform:scaleY(0) translateY(-10px)}50%{opacity:1;transform:scaleY(1) translateY(0)}}
+    @keyframes fadeU{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── MARQUEE ─────────────────────────────────────────────── */
+    .marquee-strip{background:var(--surf);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:.85rem 0;overflow:hidden;white-space:nowrap}
+    .marquee-track{display:inline-flex;gap:3rem;animation:marquee 22s linear infinite}
+    .marquee-track span{font-size:.62rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--cream3)}
+    .marquee-track em{font-style:normal;color:var(--gold);font-size:.75rem}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    /* ── ABOUT ───────────────────────────────────────────────── */
+    #nosotros{background:var(--surf);padding:7rem 2.5rem}
+    .about-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+    .about-img-wrap{aspect-ratio:3/4;overflow:hidden;position:relative}
+    .about-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+    .about-img-wrap:hover img{transform:scale(1.04)}
+    .about-img-caption{position:absolute;bottom:0;left:0;right:0;padding:1.5rem;background:linear-gradient(to top,rgba(8,6,3,.8),transparent);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream3)}
+    .about-body{}
+    .about-label{font-size:.65rem;font-weight:500;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;display:block}
+    .about-title{font-family:var(--fh);font-size:clamp(2.2rem,4vw,3.5rem);font-weight:400;line-height:1.15;color:var(--cream);margin-bottom:2rem}
+    .about-title em{font-style:italic;color:var(--gold)}
+    .about-text{font-size:.9rem;color:var(--cream2);line-height:1.9;font-weight:300;margin-bottom:1rem}
+    .about-divider{width:40px;height:1px;background:var(--gold);margin:2rem 0}
+    .about-quote{font-family:var(--fh);font-size:1.3rem;font-style:italic;color:var(--cream2);line-height:1.6;font-weight:300;border-left:2px solid var(--gold);padding-left:1.5rem;margin-bottom:2rem}
+    .about-feats{display:grid;grid-template-columns:1fr 1fr;gap:.5rem .75rem;margin-bottom:2rem}
+    .af{font-size:.78rem;color:var(--cream3);display:flex;align-items:center;gap:.5rem;font-weight:400;letter-spacing:.03em}
+    .af::before{content:'✦';color:var(--gold);font-size:.55rem;flex-shrink:0}
+
+    /* ── STATS ───────────────────────────────────────────────── */
+    #stats{background:var(--bg);padding:5rem 2.5rem;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+    .stats-row{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;text-align:center}
+    .snum{font-family:var(--fh);font-size:4rem;font-weight:300;color:var(--gold);line-height:1}
+    .slbl{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--cream3);margin-top:.5rem;font-weight:500}
+
+    /* ── GALLERY ─────────────────────────────────────────────── */
+    #galeria{background:var(--bg)}
+    .gal-header{text-align:center;padding:5rem 2.5rem 3rem}
+    .gal-label{font-size:.65rem;font-weight:500;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:1.2rem}
+    .gal-title{font-family:var(--fh);font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);letter-spacing:.02em}
+    .gal-title em{font-style:italic;color:var(--gold)}
+    .gal-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:280px 280px}
+    .gal-item{overflow:hidden;position:relative;cursor:pointer}
+    .gal-item img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease),filter .5s ease;filter:brightness(.8) saturate(.9)}
+    .gal-item:hover img{transform:scale(1.07);filter:brightness(1) saturate(1.1)}
+    .gal-item.tall{grid-row:span 2}
+    .gal-item.wide{grid-column:span 2}
+    .gal-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,6,3,.6),transparent);opacity:0;transition:opacity .4s ease;display:flex;align-items:flex-end;padding:1rem}
+    .gal-item:hover .gal-overlay{opacity:1}
+    .gal-caption{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream2)}
+
+    /* ── MENU ────────────────────────────────────────────────── */
+    #menu{background:var(--surf);padding:6rem 2.5rem}
+    .menu-inner{max-width:1200px;margin:0 auto}
+    .menu-header{text-align:center;margin-bottom:4rem}
+    .menu-label{font-size:.65rem;font-weight:500;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:1.2rem}
+    .menu-title{font-family:var(--fh);font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream)}
+    .menu-title em{font-style:italic;color:var(--gold)}
+    .menu-tabs{display:flex;gap:0;justify-content:center;flex-wrap:wrap;margin-bottom:3.5rem;border-bottom:1px solid var(--bd)}
+    .mtab{padding:.75rem 1.5rem;font-family:var(--fb);font-size:.68rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--cream3);cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;transition:all .3s ease;margin-bottom:-1px;position:relative}
+    .mtab:hover{color:var(--cream)}
+    .mtab.on{color:var(--gold);border-bottom-color:var(--gold)}
+    .menu-panel{display:none}
+    .menu-panel.on{display:block}
+    /* Two-column editorial menu */
+    .menu-list{display:grid;grid-template-columns:1fr 1fr;gap:0}
+    .menu-item{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.5rem;border-bottom:1px solid var(--bd);transition:background .25s ease;cursor:pointer}
+    .mi-thumb{width:68px;height:68px;flex-shrink:0;overflow:hidden;background:var(--surf3)}
+    .mi-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease)}
+    .menu-item:hover .mi-thumb img{transform:scale(1.08)}
+    .menu-item:nth-child(odd){border-right:1px solid var(--bd)}
+    .menu-item:hover{background:var(--surf2)}
+    .mi-info{flex:1}
+    .mi-name{font-family:var(--fh);font-size:1.05rem;font-weight:500;color:var(--cream);margin-bottom:.2rem}
+    .mi-desc{font-size:.75rem;color:var(--cream3);font-weight:300;line-height:1.5}
+    .mi-badge{display:inline-block;font-size:.58rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--bdg);padding:.15rem .5rem;margin-bottom:.3rem}
+    .mi-price{font-family:var(--fh);font-size:1rem;font-weight:500;color:var(--gold);white-space:nowrap;flex-shrink:0}
+    .mi-price small{font-size:.65rem;color:var(--cream3);margin-left:.2rem}
+    .mi-add{background:none;border:1px solid var(--bd);color:var(--cream3);font-family:var(--fb);font-size:.62rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .65rem;cursor:pointer;transition:all .25s ease;margin-left:.75rem;flex-shrink:0}
+    .mi-add:hover{border-color:var(--gold);color:var(--gold)}
+    /* Full-bleed featured dish */
+    .menu-featured{height:340px;position:relative;overflow:hidden;margin-bottom:0}
+    .menu-featured img{width:100%;height:100%;object-fit:cover;filter:brightness(.5)}
+    .menu-feat-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+    .menu-feat-label{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem}
+    .menu-feat-title{font-family:var(--fh);font-size:2.5rem;font-weight:300;color:var(--cream);margin-bottom:.5rem}
+    .menu-feat-desc{font-size:.85rem;color:var(--cream2);font-weight:300;max-width:420px}
+
+    /* ── TESTIMONIALS ────────────────────────────────────────── */
+    #resenas{background:var(--bg);padding:7rem 2.5rem}
+    .test-inner{max-width:1100px;margin:0 auto}
+    .test-header{text-align:center;margin-bottom:5rem}
+    .test-label{font-size:.65rem;font-weight:500;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:1.2rem}
+    .test-title{font-family:var(--fh);font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream)}
+    .test-title em{font-style:italic;color:var(--gold)}
+    .test-rating-row{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:1.25rem}
+    .test-stars-big{color:var(--gold);font-size:1.1rem;letter-spacing:3px}
+    .test-rating-text{font-size:.78rem;color:var(--cream2);font-weight:300}
+    .test-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+    .tcard{background:var(--surf);border:1px solid var(--bd);padding:2.5rem;transition:all .4s var(--ease)}
+    .tcard:hover{border-color:var(--bdg);transform:translateY(-4px)}
+    .tcard-quote{font-family:var(--fh);font-size:3rem;line-height:1;color:var(--gold);opacity:.4;margin-bottom:.5rem;font-weight:300}
+    .tcard-text{font-family:var(--fh);font-size:1.1rem;font-style:italic;color:var(--cream2);line-height:1.8;font-weight:300;margin-bottom:1.5rem}
+    .tcard-author{display:flex;align-items:center;gap:.85rem}
+    .tcard-av{width:36px;height:36px;border-radius:50%;background:var(--surf3);border:1px solid var(--bdg);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:.95rem;color:var(--gold);font-weight:500;flex-shrink:0}
+    .tcard-name{font-size:.78rem;font-weight:500;color:var(--cream);letter-spacing:.08em}
+    .tcard-src{font-size:.65rem;color:var(--cream3);margin-top:.1rem;letter-spacing:.05em}
+    .tcard-stars{color:var(--gold);font-size:.7rem;margin-top:.1rem}
+
+    /* ── RESERVATION ─────────────────────────────────────────── */
+    #reservacion{background:var(--surf);padding:7rem 2.5rem}
+    .res-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start}
+    .res-left{}
+    .res-label{font-size:.65rem;font-weight:500;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:1.2rem}
+    .res-title{font-family:var(--fh);font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--cream);line-height:1.15;margin-bottom:2rem}
+    .res-title em{font-style:italic;color:var(--gold)}
+    .res-info-item{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.25rem}
+    .res-ico{width:36px;height:36px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;color:var(--gold)}
+    .res-info-item strong{display:block;font-size:.75rem;font-weight:500;letter-spacing:.08em;color:var(--cream);margin-bottom:.2rem;text-transform:uppercase}
+    .res-info-item span{font-size:.82rem;color:var(--cream2);font-weight:300;line-height:1.6}
+    .res-map{display:block;height:170px;background:var(--surf2);border:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;color:var(--cream3);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;margin-top:1.5rem;transition:all .3s ease}
+    .res-map:hover{border-color:var(--bdg);color:var(--gold)}
+    .res-form{}
+    .fg{margin-bottom:1rem}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+    label{display:block;font-size:.62rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--cream3);margin-bottom:.45rem}
+    input,select,textarea{width:100%;padding:.78rem 1rem;border:1px solid var(--bd);background:var(--surf2);color:var(--cream);font-family:var(--fb);font-size:.88rem;font-weight:300;outline:none;transition:all .3s ease;-webkit-appearance:none;appearance:none}
+    input::placeholder{color:var(--cream3)}
+    input:focus,select:focus,textarea:focus{border-color:var(--gold);background:var(--surf3)}
+    select{cursor:pointer}
+    select option{background:var(--surf2);color:var(--cream)}
+    textarea{resize:vertical;min-height:90px}
+    .ferr{font-size:.68rem;color:#c0392b;margin-top:.3rem;display:none;letter-spacing:.05em}
+    .ferr.show{display:block}
+    .inp-err{border-color:#6b1420!important}
+    .form-sbmt{width:100%;padding:.9rem;background:var(--gold);color:var(--bg);font-family:var(--fb);font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;transition:all .3s ease;margin-top:.5rem}
+    .form-sbmt:hover{background:var(--gold2)}
+    .fsuc{display:none;text-align:center;padding:3rem 0}
+    .fsuc.show{display:block}
+    .fsuc-icon{width:60px;height:60px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;color:var(--gold);font-size:1.4rem}
+    .fsuc-t{font-family:var(--fh);font-size:1.8rem;font-weight:300;color:var(--cream);margin-bottom:.5rem}
+    .fsuc-s{font-size:.82rem;color:var(--cream2);font-weight:300}
+    .fsuc-id{display:inline-block;font-size:.72rem;color:var(--gold);letter-spacing:.1em;margin:.75rem 0 1.5rem;border:1px solid var(--bdg);padding:.3rem .85rem}
+
+    /* ── DELIVERY STRIP ──────────────────────────────────────── */
+    #delivery{background:var(--bg);padding:5rem 2.5rem;border-top:1px solid var(--bd)}
+    .del-inner{max-width:900px;margin:0 auto;text-align:center}
+    .del-label{font-size:.65rem;font-weight:500;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:1rem}
+    .del-title{font-family:var(--fh);font-size:clamp(1.8rem,3vw,2.5rem);font-weight:300;color:var(--cream);margin-bottom:2.5rem}
+    .del-title em{font-style:italic;color:var(--gold)}
+    .del-methods{display:flex;gap:1px;justify-content:center;background:var(--bd)}
+    .del-card{flex:1;max-width:240px;background:var(--surf);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .3s ease;border:none}
+    .del-card:hover{background:var(--surf2)}
+    .del-card.sel{background:var(--surf2);outline:1px solid var(--bdg)}
+    .dc-icon{font-size:1.8rem;margin-bottom:.75rem}
+    .dc-name{font-size:.72rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--cream);margin-bottom:.3rem}
+    .dc-sub{font-size:.72rem;color:var(--cream3);font-weight:300}
+    .del-cta{margin-top:2.5rem}
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    #footer{background:var(--bg);border-top:1px solid var(--bd);padding:5rem 2.5rem 2.5rem}
+    .foot-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:4rem}
+    .foot-logo{font-family:var(--fh);font-size:1.8rem;font-weight:300;letter-spacing:.15em;text-transform:uppercase;color:var(--cream);margin-bottom:.75rem}
+    .foot-logo em{color:var(--gold);font-style:normal}
+    .foot-desc{font-size:.78rem;color:var(--cream3);font-weight:300;line-height:1.9;margin-bottom:1.5rem;max-width:260px}
+    .foot-socials{display:flex;gap:.5rem}
+    .fsoc{width:34px;height:34px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:var(--cream3);transition:all .3s ease;text-decoration:none}
+    .fsoc:hover{border-color:var(--gold);color:var(--gold)}
+    .fcol h4{font-size:.6rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.25rem}
+    .flinks{list-style:none}
+    .flinks li{margin-bottom:.5rem}
+    .flinks a{font-size:.78rem;color:var(--cream3);font-weight:300;transition:all .25s ease}
+    .flinks a:hover{color:var(--cream)}
+    .fci{display:flex;align-items:flex-start;gap:.65rem;margin-bottom:.75rem;font-size:.78rem;color:var(--cream3);font-weight:300;line-height:1.6}
+    .fci span:first-child{flex-shrink:0;color:var(--gold);margin-top:2px}
+    .foot-bottom{max-width:1200px;margin:0 auto;border-top:1px solid var(--bd);padding-top:1.75rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .foot-copy{font-size:.68rem;color:var(--cream3);font-weight:300;letter-spacing:.05em}
+    .foot-blinks{display:flex;gap:1.5rem}
+    .foot-blinks a{font-size:.68rem;color:var(--cream3);transition:color .25s ease}
+    .foot-blinks a:hover{color:var(--cream)}
+
+    /* ── CART DRAWER ─────────────────────────────────────────── */
+    .cov{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1100;display:none;backdrop-filter:blur(6px)}
+    .cov.open{display:block}
+    .cdrw{position:fixed;right:-500px;top:0;bottom:0;width:460px;background:var(--surf2);z-index:1101;transition:right .35s var(--ease);display:flex;flex-direction:column;border-left:1px solid var(--bd)}
+    .cdrw.open{right:0}
+    .cdrw-head{padding:1.5rem 2rem;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+    .cdrw-head h3{font-family:var(--fh);font-size:1.4rem;font-weight:400;color:var(--cream);letter-spacing:.05em}
+    .cx{width:32px;height:32px;border:1px solid var(--bd);background:none;color:var(--cream3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .3s ease}
+    .cx:hover{border-color:var(--cream);color:var(--cream)}
+    .cdrw-body{flex:1;overflow-y:auto;padding:1.5rem 2rem}
+    .cempty{text-align:center;padding:3.5rem 0;color:var(--cream3)}
+    .cempty .eico{font-size:2.5rem;margin-bottom:1rem}
+    .cempty p{font-size:.82rem;font-weight:300;letter-spacing:.05em}
+    .ci{display:flex;align-items:center;gap:.85rem;padding:.85rem 0;border-bottom:1px solid var(--bd)}
+    .ci-ico{width:46px;height:46px;background:var(--surf3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+    .ci-info{flex:1}
+    .ci-nm{font-size:.85rem;font-weight:500;color:var(--cream);margin-bottom:.15rem}
+    .ci-pr{font-size:.78rem;color:var(--gold)}
+    .ci-qty{display:flex;align-items:center;gap:.4rem}
+    .qb{width:26px;height:26px;border:1px solid var(--bd);background:none;color:var(--cream3);cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .25s ease}
+    .qb:hover{border-color:var(--gold);color:var(--gold)}
+    .qn{font-size:.82rem;font-weight:500;color:var(--cream);min-width:16px;text-align:center}
+    .ci-rm{background:none;border:none;color:var(--cream3);cursor:pointer;font-size:.85rem;transition:color .25s ease}
+    .ci-rm:hover{color:#c0392b}
+    .cdrw-foot{border-top:1px solid var(--bd);padding:1.5rem 2rem;background:var(--surf)}
+    .crow{display:flex;justify-content:space-between;font-size:.82rem;color:var(--cream2);margin-bottom:.35rem;font-weight:300}
+    .crow.tot{font-size:.9rem;font-weight:500;color:var(--cream);border-top:1px solid var(--bd);padding-top:.6rem;margin-top:.4rem}
+    .crow.tot span:last-child{color:var(--gold)}
+    .caddr{margin-top:1rem}
+    .cchk{width:100%;padding:.88rem;background:var(--gold);color:var(--bg);font-family:var(--fb);font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;border:none;cursor:pointer;margin-top:.85rem;transition:background .3s ease}
+    .cchk:hover{background:var(--gold2)}
+
+    /* ── TOAST ───────────────────────────────────────────────── */
+    #toasts{position:fixed;bottom:2rem;right:2rem;z-index:9000;display:flex;flex-direction:column;gap:.6rem}
+    .tst{background:var(--surf2);border:1px solid var(--bd);border-left:3px solid var(--gold);padding:.85rem 1.15rem;display:flex;align-items:center;gap:.7rem;font-size:.8rem;color:var(--cream);min-width:260px;animation:tstin .3s ease}
+    .tst.suc{border-left-color:#27ae60}
+    .tst.err{border-left-color:#c0392b}
+    @keyframes tstin{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes tstout{from{transform:translateX(0);opacity:1}to{transform:translateX(110%);opacity:0}}
+    .tst.out{animation:tstout .3s ease forwards}
+
+    /* ── SCROLL REVEAL ───────────────────────────────────────── */
+    .rv{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+    .rv.on{opacity:1;transform:none}
+    .rvL{opacity:0;transform:translateX(-24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+    .rvL.on{opacity:1;transform:none}
+    .rvR{opacity:0;transform:translateX(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+    .rvR.on{opacity:1;transform:none}
+    .stg>*{opacity:0;transform:translateY(18px);transition:opacity .55s var(--ease),transform .55s var(--ease)}
+    .stg.on>*{opacity:1;transform:none}
+    .stg.on>*:nth-child(1){transition-delay:0s}
+    .stg.on>*:nth-child(2){transition-delay:.07s}
+    .stg.on>*:nth-child(3){transition-delay:.14s}
+    .stg.on>*:nth-child(4){transition-delay:.21s}
+    .stg.on>*:nth-child(5){transition-delay:.28s}
+    .stg.on>*:nth-child(6){transition-delay:.35s}
+    .stg.on>*:nth-child(7){transition-delay:.42s}
+    .stg.on>*:nth-child(8){transition-delay:.49s}
+
+    /* ── DISH MODAL ─────────────────────────────────────────── */
+    #dishOv{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:2000;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+    #dishOv.open{display:flex}
+    .dish-modal{background:var(--surf2);display:flex;width:100%;max-width:860px;max-height:90vh;overflow:hidden;position:relative;border:1px solid var(--bd);animation:dmIn .3s var(--ease)}
+    @keyframes dmIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+    .dm-close{position:absolute;top:.85rem;right:.85rem;z-index:10;width:34px;height:34px;border:1px solid var(--bd);background:rgba(8,6,3,.8);color:var(--cream3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .25s ease}
+    .dm-close:hover{border-color:var(--cream);color:var(--cream)}
+    .dm-photo{width:42%;flex-shrink:0;overflow:hidden;position:relative;min-height:320px}
+    .dm-photo img{width:100%;height:100%;object-fit:cover}
+    .dm-body{flex:1;overflow-y:auto;padding:2rem 1.75rem;display:flex;flex-direction:column}
+    .dm-dbadge{display:inline-block;font-size:.58rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--bdg);padding:.15rem .5rem;margin-bottom:.65rem}
+    .dm-dbadge:empty{display:none}
+    .dm-name{font-family:var(--fh);font-size:1.9rem;font-weight:400;color:var(--cream);line-height:1.1;margin-bottom:.6rem}
+    .dm-desc{font-size:.82rem;color:var(--cream2);font-weight:300;line-height:1.7;margin-bottom:1.25rem}
+    .dm-sec{font-size:.58rem;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;margin-top:1.1rem}
+    .dm-chips{display:flex;flex-wrap:wrap;gap:.35rem}
+    .chip{padding:.28rem .72rem;border:1px solid var(--bd);font-size:.72rem;color:var(--cream2);cursor:pointer;transition:all .2s ease;user-select:none;background:none;line-height:1.4}
+    .chip:hover{border-color:var(--gold);color:var(--gold)}
+    .chip.off{border-color:rgba(240,235,226,.1);color:var(--cream3);text-decoration:line-through;opacity:.45}
+    .chip.extra{border-color:var(--bdg);color:var(--cream3)}
+    .chip.extra.on{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
+    .dm-foot{display:flex;align-items:center;gap:.75rem;margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--bd)}
+    .dm-qty{display:flex;align-items:center;gap:.45rem;flex-shrink:0}
+    .dm-qb{width:32px;height:32px;border:1px solid var(--bd);background:none;color:var(--cream3);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .2s ease;line-height:1}
+    .dm-qb:hover{border-color:var(--gold);color:var(--gold)}
+    #dmQty{font-size:.95rem;font-weight:600;color:var(--cream);min-width:22px;text-align:center}
+    .dm-notes{width:100%;min-height:70px;padding:.65rem .85rem;border:1px solid var(--bd);background:var(--surf3);color:var(--cream);font-family:var(--fb);font-size:.8rem;font-weight:300;outline:none;resize:vertical;transition:border-color .25s ease;margin-top:.3rem;line-height:1.6}
+    .dm-notes:focus{border-color:var(--gold)}
+    .dm-notes::placeholder{color:var(--cream3)}
+    .dm-add-btn{flex:1;padding:.9rem 1rem;background:var(--gold);color:var(--bg);font-family:var(--fb);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;border:none;cursor:pointer;transition:background .3s ease;white-space:nowrap}
+    .dm-add-btn:hover{background:var(--gold2)}
+    @media(max-width:640px){
+      .dish-modal{flex-direction:column;max-height:96vh}
+      .dm-photo{width:100%;min-height:0;max-height:210px}
+      .dm-body{padding:1.25rem}
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media(max-width:1024px){
+      .foot-grid{grid-template-columns:1fr 1fr;gap:2rem}
+      .gal-grid{grid-template-columns:repeat(3,1fr);grid-template-rows:220px 220px}
+      .gal-item.wide{grid-column:span 1}
+    }
+    @media(max-width:768px){
+      #nav{padding:1.25rem 1.5rem}
+      #nav.stuck{padding:.85rem 1.5rem}
+      .nav-links,.nav-r{display:none}
+      .hamburger{display:flex}
+      .hero-content{padding:3rem 1.5rem}
+      .about-grid{grid-template-columns:1fr;gap:3rem}
+      .about-img-wrap{aspect-ratio:16/9}
+      .stats-row{grid-template-columns:1fr 1fr}
+      .gal-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+      .gal-item.tall{grid-row:span 1}
+      .menu-list{grid-template-columns:1fr}
+      .menu-item:nth-child(odd){border-right:none}
+      .test-grid{grid-template-columns:1fr}
+      .res-inner{grid-template-columns:1fr;gap:3rem}
+      .foot-grid{grid-template-columns:1fr;gap:2rem}
+      .cdrw{width:100%;right:-100%}
+      .foot-bottom{flex-direction:column;align-items:flex-start}
+      .del-methods{flex-direction:column;align-items:center;background:none;gap:.5rem}
+      .del-card{width:100%;max-width:320px}
+    }
+    @media(max-width:480px){
+      .hero-ctas{flex-direction:column}
+      .btn-outline-gold,.btn-outline-cream{width:100%;justify-content:center;max-width:260px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-name">Taco Giro</div>
+  <div class="ld-sub">Nogales · Sonora · Est. 2008</div>
+  <div class="ld-line"><div class="ld-fill"></div></div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">Taco <em>Giro</em></a>
+  <ul class="nav-links">
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#galeria">Galería</a></li>
+    <li><a href="#menu">Menú</a></li>
+    <li><a href="#resenas">Reseñas</a></li>
+    <li><a href="#reservacion">Reservar</a></li>
+    <li><a href="#footer">Contacto</a></li>
+  </ul>
+  <div class="nav-r">
+    <button class="nav-cart-btn" onclick="openCart()">Carrito <span class="cbadge" id="cBadge">0</span></button>
+  </div>
+  <button class="hamburger" onclick="toggleNav()" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mob-ov" id="mobOv" onclick="toggleNav()"></div>
+<div class="mob-menu" id="mobMenu">
+  <a href="#nosotros" onclick="toggleNav()">Nosotros</a>
+  <a href="#galeria" onclick="toggleNav()">Galería</a>
+  <a href="#menu" onclick="toggleNav()">Menú</a>
+  <a href="#resenas" onclick="toggleNav()">Reseñas</a>
+  <a href="#reservacion" onclick="toggleNav()">Reservar</a>
+  <a href="#footer" onclick="toggleNav()">Contacto</a>
+  <div style="padding-top:1.5rem">
+    <button class="form-sbmt" onclick="openCart();toggleNav()">Ver Carrito</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="hero-slides" id="heroSlides">
+      <div class="hslide on"  style="background-image:url('https://images.pexels.com/photos/7388095/pexels-photo-7388095.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
+      <div class="hslide"     style="background-image:url('https://images.pexels.com/photos/8364557/pexels-photo-8364557.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
+      <div class="hslide"     style="background-image:url('https://images.pexels.com/photos/36498696/pexels-photo-36498696.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
+      <div class="hslide"     style="background-image:url('https://images.pexels.com/photos/11153859/pexels-photo-11153859.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
+      <div class="hslide"     style="background-image:url('https://images.pexels.com/photos/8448069/pexels-photo-8448069.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
+      <div class="hslide"     style="background-image:url('https://images.pexels.com/photos/18574186/pexels-photo-18574186.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
+      <div class="hslide"     style="background-image:url('https://images.pexels.com/photos/1212276/pexels-photo-1212276.jpeg?auto=compress&cs=tinysrgb&w=1920')"></div>
+    </div>
+    <div class="hero-veil"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Heroica Nogales, Sonora · Desde 2008 · ⭐ 4.7 / 5</p>
+    <h1 class="hero-title">
+      Taco<br>
+      <em>Giro</em>
+    </h1>
+    <p class="hero-desc">Ingredientes frescos, recetas tradicionales y el sabor auténtico de México en cada bocado. Visítanos en Plaza Cumbres.</p>
+    <div class="hero-ctas">
+      <a href="#menu" class="btn-outline-gold">Ver Menú</a>
+      <a href="#reservacion" class="btn-outline-cream">Reservar Mesa</a>
+      <button class="btn-outline-cream" onclick="openCart()">Pedir Ahora</button>
+    </div>
+  </div>
+  <div class="hero-scroll" onclick="document.getElementById('nosotros').scrollIntoView({behavior:'smooth'})">Scroll</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track" id="marqueeTrack">
+    <span>DESDE 2008</span><em>·</em><span>CARNE ASADA A LA PARRILLA</span><em>·</em><span>NOGALES, SONORA</span><em>·</em><span>INGREDIENTES FRESCOS</span><em>·</em><span>RECETAS TRADICIONALES</span><em>·</em><span>TACOS · MARISCOS · DESAYUNOS</span><em>·</em><span>4.7 ESTRELLAS EN GOOGLE</span><em>·</em><span>DISPONIBLE EN RAPPI</span><em>·</em><span>PLAZA CUMBRES</span><em>·</em>
+    <span>DESDE 2008</span><em>·</em><span>CARNE ASADA A LA PARRILLA</span><em>·</em><span>NOGALES, SONORA</span><em>·</em><span>INGREDIENTES FRESCOS</span><em>·</em><span>RECETAS TRADICIONALES</span><em>·</em><span>TACOS · MARISCOS · DESAYUNOS</span><em>·</em><span>4.7 ESTRELLAS EN GOOGLE</span><em>·</em><span>DISPONIBLE EN RAPPI</span><em>·</em><span>PLAZA CUMBRES</span><em>·</em>
+  </div>
+</div>
+
+<!-- NOSOTROS -->
+<section id="nosotros">
+  <div class="about-grid">
+    <div class="about-img-wrap rvL">
+      <img src="https://img02.restaurantguru.com/c7ee-Taco-Giro-Nogales-food-1.jpg"
+           alt="Platillos Taco Giro"
+           onerror="this.style.display='none';this.parentElement.style.background='var(--surf2)'">
+      <div class="about-img-caption">Platillos preparados con ingredientes frescos del día</div>
+    </div>
+    <div class="about-body rvR">
+      <span class="about-label">Nuestra Historia</span>
+      <h2 class="about-title">Sabores que <em>definen</em> Nogales</h2>
+      <div class="about-divider"></div>
+      <p class="about-text">Fundados en 2008, en Taco Giro llevamos más de 16 años trayendo lo mejor de la cocina mexicana a la mesa. Nuestros tacos de carne asada, preparados a la parrilla con carne fresca y tortillas hechas al momento, son el corazón de lo que somos.</p>
+      <blockquote class="about-quote">"La vida es demasiado corta para comer mal. Elige calidad."</blockquote>
+      <p class="about-text">Ubicados en Plaza Cumbres, somos el punto de encuentro de familias, profesionales y visitantes que buscan sabor auténtico en un ambiente acogedor. Cada platillo — desde nuestro guacamole fresco hasta el flan de la casa — se prepara con dedicación y orgullo.</p>
+      <div class="about-feats">
+        <div class="af">Carne asada a la parrilla</div>
+        <div class="af">Mariscos frescos</div>
+        <div class="af">Desayunos tradicionales</div>
+        <div class="af">Guacamole al momento</div>
+        <div class="af">Asientos al aire libre</div>
+        <div class="af">Disponible en Rappi</div>
+        <div class="af">Acepta tarjetas</div>
+        <div class="af">Ambiente familiar</div>
+      </div>
+      <a href="#menu" class="btn-outline-gold" style="display:inline-flex">Explorar el Menú →</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="stats-row stg">
+    <div class="stat-card">
+      <div class="snum" data-target="16">0</div>
+      <div class="slbl">Años de trayectoria</div>
+    </div>
+    <div class="stat-card">
+      <div class="snum" data-target="528">0</div>
+      <div class="slbl">Reseñas Google</div>
+    </div>
+    <div class="stat-card">
+      <div class="snum" data-target="47" data-dec>0</div>
+      <div class="slbl">Calificación / 5 ⭐</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERÍA -->
+<section id="galeria" style="padding:0">
+  <div class="gal-header rv">
+    <span class="gal-label">Nuestros Platillos</span>
+    <h2 class="gal-title">Una <em>experiencia</em> visual</h2>
+  </div>
+  <div class="gal-grid">
+    <div class="gal-item tall">
+      <img src="https://img02.restaurantguru.com/c2f5-Taco-Giro-Nogales-food.jpg" alt="Taco Giro platillo">
+      <div class="gal-overlay"><span class="gal-caption">Mariscos frescos</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://img02.restaurantguru.com/c739-Restaurant-Taco-Giro-aguachile.jpg" alt="Aguachile Taco Giro">
+      <div class="gal-overlay"><span class="gal-caption">Aguachile</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://img02.restaurantguru.com/c1fe-Taco-Giro-Nogales-dishes.jpg" alt="Platillo Taco Giro">
+      <div class="gal-overlay"><span class="gal-caption">Platillos del día</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://img02.restaurantguru.com/c4a7-Taco-Giro-Nogales-meals.jpg" alt="Taco Giro meals">
+      <div class="gal-overlay"><span class="gal-caption">Especialidades</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://img02.restaurantguru.com/c214-Taco-Giro-Nogales-aguachile.jpg" alt="Aguachile 2">
+      <div class="gal-overlay"><span class="gal-caption">Cocteles de mariscos</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://img02.restaurantguru.com/c8d7-Taco-Giro-Nogales-beverage.jpg" alt="Bebidas Taco Giro">
+      <div class="gal-overlay"><span class="gal-caption">Bebidas</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://img02.restaurantguru.com/cc71-Restaurant-Taco-Giro-chocolate-mousse.jpg" alt="Postre">
+      <div class="gal-overlay"><span class="gal-caption">Postres de la casa</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="https://img02.restaurantguru.com/c5a4-Taco-Giro-Nogales-drink.jpg" alt="Drink">
+      <div class="gal-overlay"><span class="gal-caption">Coctelería</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MENÚ -->
+<section id="menu">
+  <div class="menu-inner">
+    <div class="menu-header rv">
+      <span class="menu-label">Lo que ofrecemos</span>
+      <h2 class="menu-title">Nuestro <em>Menú</em></h2>
+    </div>
+
+    <!-- Featured image -->
+    <div class="menu-featured rv" style="margin-bottom:2.5rem">
+      <img src="https://img02.restaurantguru.com/c9ed-Restaurant-Taco-Giro-mussels.jpg" alt="Mariscos Taco Giro">
+      <div class="menu-feat-content">
+        <div class="menu-feat-label">Especialidad de la Casa</div>
+        <div class="menu-feat-title">Carne Asada · Mariscos · Desayunos</div>
+        <div class="menu-feat-desc">Preparados con ingredientes frescos todos los días. Autenticidad en cada platillo desde 2008.</div>
+      </div>
+    </div>
+
+    <div class="menu-tabs rv">
+      <button class="mtab on" data-p="tacos">Tacos</button>
+      <button class="mtab" data-p="especiales">Platillos Especiales</button>
+      <button class="mtab" data-p="mariscos">Mariscos</button>
+      <button class="mtab" data-p="desayunos">Desayunos</button>
+      <button class="mtab" data-p="combinaciones">Combinaciones</button>
+      <button class="mtab" data-p="caldos">Caldos</button>
+      <button class="mtab" data-p="acomp">Acompañamientos</button>
+      <button class="mtab" data-p="postres">Postres</button>
+      <button class="mtab" data-p="bebidas">Bebidas</button>
+    </div>
+
+    <!-- TACOS -->
+    <div class="menu-panel on" id="p-tacos">
+      <div class="menu-list" id="ml-tacos"></div>
+    </div>
+    <!-- ESPECIALES -->
+    <div class="menu-panel" id="p-especiales">
+      <div class="menu-list" id="ml-especiales"></div>
+    </div>
+    <!-- MARISCOS -->
+    <div class="menu-panel" id="p-mariscos">
+      <div class="menu-list" id="ml-mariscos"></div>
+    </div>
+    <!-- DESAYUNOS -->
+    <div class="menu-panel" id="p-desayunos">
+      <div class="menu-list" id="ml-desayunos"></div>
+    </div>
+    <!-- COMBINACIONES -->
+    <div class="menu-panel" id="p-combinaciones">
+      <div class="menu-list" id="ml-combinaciones"></div>
+    </div>
+    <!-- CALDOS -->
+    <div class="menu-panel" id="p-caldos">
+      <div class="menu-list" id="ml-caldos"></div>
+    </div>
+    <!-- ACOMPAÑAMIENTOS -->
+    <div class="menu-panel" id="p-acomp">
+      <div class="menu-list" id="ml-acomp"></div>
+    </div>
+    <!-- POSTRES -->
+    <div class="menu-panel" id="p-postres">
+      <div class="menu-list" id="ml-postres"></div>
+    </div>
+    <!-- BEBIDAS -->
+    <div class="menu-panel" id="p-bebidas">
+      <div class="menu-list" id="ml-bebidas"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="resenas">
+  <div class="test-inner">
+    <div class="test-header rv">
+      <span class="test-label">Lo que dicen nuestros clientes</span>
+      <h2 class="test-title">Voces <em>reales</em></h2>
+      <div class="test-rating-row">
+        <span class="test-stars-big">★★★★★</span>
+        <span class="test-rating-text">4.7 de 5 · 528+ reseñas en Google Maps</span>
+      </div>
+    </div>
+    <div class="test-grid stg">
+      <div class="tcard">
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">Los mejores tacos de carne asada de Nogales, sin duda alguna. El guacamole de Brayan es impresionante — siempre fresco, siempre perfecto. Venimos desde hace años y nunca decepciona.</p>
+        <div class="tcard-author">
+          <div class="tcard-av">M</div>
+          <div>
+            <div class="tcard-name">María G.</div>
+            <div class="tcard-src">Reseña de Google</div>
+            <div class="tcard-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">Brigitte nos atendió de maravilla — amable, rápida y siempre pendiente de la mesa. La comida llegó caliente y con el sabor que esperábamos. Lugar limpio, precios justos y ambiente excelente.</p>
+        <div class="tcard-author">
+          <div class="tcard-av">J</div>
+          <div>
+            <div class="tcard-name">Jorge L.</div>
+            <div class="tcard-src">Reseña de Google</div>
+            <div class="tcard-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">Llevamos años viniendo con la familia a Taco Giro. Es nuestro lugar favorito en Nogales. Los tacos de pescado son increíbles y las porciones siempre generosas. ¡Los recomiendo ampliamente!</p>
+        <div class="tcard-author">
+          <div class="tcard-av">R</div>
+          <div>
+            <div class="tcard-name">Rosa A.</div>
+            <div class="tcard-src">Reseña de Google</div>
+            <div class="tcard-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">Excelente relación calidad-precio. La carne asada está perfectamente preparada, el local está muy limpio y el ambiente es ideal para ver el partido. Sin duda regresaré con los amigos.</p>
+        <div class="tcard-author">
+          <div class="tcard-av">C</div>
+          <div>
+            <div class="tcard-name">Carlos P.</div>
+            <div class="tcard-src">Reseña de Google</div>
+            <div class="tcard-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVACIÓN -->
+<section id="reservacion">
+  <div class="res-inner">
+    <div class="res-left rvL">
+      <span class="res-label">Agenda tu Visita</span>
+      <h2 class="res-title">Haz tu<br><em>Reservación</em></h2>
+      <div class="res-info-item">
+        <div class="res-ico">📍</div>
+        <div><strong>Dirección</strong><span>Blvd. El Greco 70, Plaza Cumbres<br>84066 Heroica Nogales, Sonora</span></div>
+      </div>
+      <div class="res-info-item">
+        <div class="res-ico">📞</div>
+        <div><strong>Teléfono</strong><span><a href="tel:+526314540422" style="color:var(--gold)">+52 631 454 0422</a></span></div>
+      </div>
+      <div class="res-info-item">
+        <div class="res-ico">🕐</div>
+        <div><strong>Horario</strong><span style="color:#C9A84C80">[Horario por confirmar con el restaurante]</span></div>
+      </div>
+      <div class="res-info-item">
+        <div class="res-ico">💳</div>
+        <div><strong>Pago</strong><span>Efectivo · Tarjeta de crédito y débito</span></div>
+      </div>
+      <div class="res-info-item">
+        <div class="res-ico">♿</div>
+        <div><strong>Accesibilidad</strong><span>Accesible para sillas de ruedas · Estacionamiento disponible</span></div>
+      </div>
+      <a href="https://maps.google.com/?q=Blvd.+El+Greco+70,+Plaza+Cumbres,+Nogales,+Sonora" target="_blank" class="res-map" style="display:flex">
+        <span style="font-size:1.5rem">🗺️</span>
+        <span>Ver en Google Maps</span>
+        <span style="font-size:.62rem">Blvd. El Greco 70 · Plaza Cumbres</span>
+      </a>
+    </div>
+    <div class="res-form rvR">
+      <div id="rForm">
+        <div class="frow">
+          <div class="fg"><label for="rNom">Nombre *</label><input type="text" id="rNom" placeholder="Tu nombre completo"><div class="ferr" id="e-rNom">Campo requerido</div></div>
+          <div class="fg"><label for="rTel">Teléfono *</label><input type="tel" id="rTel" placeholder="+52 631 000 0000"><div class="ferr" id="e-rTel">Teléfono requerido</div></div>
+        </div>
+        <div class="fg"><label for="rEmail">Correo electrónico *</label><input type="email" id="rEmail" placeholder="tucorreo@email.com"><div class="ferr" id="e-rEmail">Correo inválido</div></div>
+        <div class="frow">
+          <div class="fg"><label for="rFecha">Fecha *</label><input type="date" id="rFecha"><div class="ferr" id="e-rFecha">Selecciona fecha</div></div>
+          <div class="fg">
+            <label for="rHora">Hora *</label>
+            <select id="rHora">
+              <option value="">Seleccionar hora</option>
+              <option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option>
+              <option>14:00</option><option>14:30</option><option>15:00</option><option>15:30</option>
+              <option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option>
+              <option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option>
+              <option>20:00</option><option>20:30</option><option>21:00</option>
+            </select>
+            <div class="ferr" id="e-rHora">Selecciona hora</div>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label for="rPax">Personas *</label>
+            <select id="rPax"><option value="">¿Cuántas personas?</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option value="9+">9 o más</option></select>
+            <div class="ferr" id="e-rPax">Selecciona personas</div>
+          </div>
+          <div class="fg">
+            <label for="rMesa">Preferencia de mesa</label>
+            <select id="rMesa"><option value="">Sin preferencia</option><option>Interior</option><option>Terraza / Aire libre</option></select>
+          </div>
+        </div>
+        <div class="fg"><label for="rNotas">Notas especiales</label><textarea id="rNotas" placeholder="Cumpleaños, alergias, solicitudes especiales..."></textarea></div>
+        <button class="form-sbmt" onclick="submitRes()">Confirmar Reservación</button>
+      </div>
+      <div class="fsuc" id="rSuc">
+        <div class="fsuc-icon">✓</div>
+        <div class="fsuc-t">Reservación Confirmada</div>
+        <div class="fsuc-s">Te contactaremos pronto para confirmar tu mesa.</div>
+        <div class="fsuc-id" id="rId"></div>
+        <button class="btn-outline-gold" onclick="resetRes()" style="display:inline-flex">Nueva Reservación</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERY -->
+<section id="delivery">
+  <div class="del-inner">
+    <span class="del-label">Sin salir de casa</span>
+    <h2 class="del-title">Pide a <em>Domicilio</em></h2>
+    <div class="del-methods stg">
+      <div class="del-card sel" onclick="selDel(this)"><div class="dc-icon">🛵</div><div class="dc-name">Pedido Directo</div><div class="dc-sub">Agrega al carrito aquí</div></div>
+      <div class="del-card" onclick="goRappi()"><div class="dc-icon">📱</div><div class="dc-name">Rappi</div><div class="dc-sub">Búscanos en la app</div></div>
+      <div class="del-card" onclick="goWA()"><div class="dc-icon">💬</div><div class="dc-name">WhatsApp</div><div class="dc-sub">+52 631 454 0422</div></div>
+    </div>
+    <div class="del-cta rv">
+      <button class="btn-outline-gold" onclick="openCart()">Ver Carrito · <span id="cCount2">0</span> items</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="foot-grid">
+    <div>
+      <div class="foot-logo">Taco <em>Giro</em></div>
+      <p class="foot-desc">Comida mexicana auténtica desde 2008. Ingredientes frescos, recetas tradicionales y el mejor servicio en Heroica Nogales, Sonora.</p>
+      <div class="foot-socials">
+        <a href="https://www.facebook.com/tacogiromexico/" target="_blank" class="fsoc" title="Facebook">f</a>
+        <a href="https://www.instagram.com/tacogiromexico/" target="_blank" class="fsoc" title="Instagram">ig</a>
+        <a href="https://wa.me/526314540422" target="_blank" class="fsoc" title="WhatsApp">wa</a>
+        <a href="#" onclick="goRappi()" class="fsoc" title="Rappi">R</a>
+      </div>
+    </div>
+    <div class="fcol">
+      <h4>Menú</h4>
+      <ul class="flinks">
+        <li><a href="#menu" onclick="switchTab('tacos')">Tacos</a></li>
+        <li><a href="#menu" onclick="switchTab('especiales')">Platillos Especiales</a></li>
+        <li><a href="#menu" onclick="switchTab('mariscos')">Mariscos</a></li>
+        <li><a href="#menu" onclick="switchTab('desayunos')">Desayunos</a></li>
+        <li><a href="#menu" onclick="switchTab('postres')">Postres</a></li>
+      </ul>
+    </div>
+    <div class="fcol">
+      <h4>Visítanos</h4>
+      <ul class="flinks">
+        <li><a href="#reservacion">Reservaciones</a></li>
+        <li><a href="#delivery">Domicilio</a></li>
+        <li><a href="#resenas">Reseñas</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#galeria">Galería</a></li>
+      </ul>
+    </div>
+    <div class="fcol">
+      <h4>Contacto</h4>
+      <div class="fci"><span>📍</span><span>Blvd. El Greco 70, Plaza Cumbres, Heroica Nogales, Sonora</span></div>
+      <div class="fci"><span>📞</span><span><a href="tel:+526314540422" style="color:inherit">+52 631 454 0422</a></span></div>
+      <div class="fci"><span>🕐</span><span style="color:rgba(201,168,76,.5)">[Horario por confirmar]</span></div>
+      <div class="fci"><span>⭐</span><span>4.7/5 · 528+ reseñas</span></div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <p class="foot-copy">© 2024 Taco Giro · Heroica Nogales, Sonora · Comida mexicana auténtica desde 2008</p>
+    <div class="foot-blinks"><a href="#">Privacidad</a><a href="#">Términos</a></div>
+  </div>
+</footer>
+
+<!-- DISH MODAL -->
+<div id="dishOv" onclick="if(event.target===this)closeDish()">
+  <div class="dish-modal" onclick="">
+    <button class="dm-close" onclick="closeDish()">✕</button>
+    <div class="dm-photo"><img id="dmImg" src="" alt=""></div>
+    <div class="dm-body">
+      <div class="dm-dbadge" id="dmBadge"></div>
+      <h3 class="dm-name" id="dmName"></h3>
+      <p class="dm-desc" id="dmDesc"></p>
+      <div class="dm-sec">Ingredientes</div>
+      <div class="dm-chips" id="dmIngrs"></div>
+      <div class="dm-sec" id="dmExtrasLbl" style="display:none">Agregar extras</div>
+      <div class="dm-chips" id="dmExtras"></div>
+      <div class="dm-sec" style="margin-top:1.1rem">Notas especiales</div>
+      <textarea id="dmNotes" class="dm-notes" placeholder="Quitar algún ingrediente, alergias, peticiones especiales…"></textarea>
+      <div class="dm-foot">
+        <div class="dm-qty">
+          <button class="dm-qb" onclick="dishQtyChange(-1)">−</button>
+          <span id="dmQty">1</span>
+          <button class="dm-qb" onclick="dishQtyChange(1)">+</button>
+        </div>
+        <button class="dm-add-btn" onclick="addDishToCart()">Agregar · $<span id="dmTotalP">0</span> MXN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cov" id="cOv" onclick="closeCart()"></div>
+<div class="cdrw" id="cDrw">
+  <div class="cdrw-head">
+    <h3>Tu Pedido</h3>
+    <button class="cx" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cdrw-body" id="cBody">
+    <div class="cempty"><div class="eico">—</div><p>Tu carrito está vacío</p></div>
+  </div>
+  <div id="cFoot" style="display:none">
+    <div class="cdrw-foot">
+      <div class="crow"><span>Subtotal</span><span id="cSub">$0 MXN</span></div>
+      <div class="crow"><span>Envío estimado</span><span>$35 MXN</span></div>
+      <div class="crow tot"><span>Total</span><span id="cTot">$35 MXN</span></div>
+      <div style="margin-top:.85rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+        <div class="fg"><label for="cNom">Nombre *</label><input type="text" id="cNom" placeholder="Tu nombre"></div>
+        <div class="fg"><label for="cTel">Teléfono *</label><input type="tel" id="cTel" placeholder="+52 631 000 0000"></div>
+      </div>
+      <div class="fg" style="margin-top:.4rem">
+        <label for="cAddr">Dirección de entrega *</label>
+        <input type="text" id="cAddr" placeholder="Calle, número, colonia, Nogales">
+      </div>
+      <div class="fg" style="margin-top:.4rem">
+        <label for="cDelivNotes">Notas de entrega</label>
+        <input type="text" id="cDelivNotes" placeholder="Color de casa, referencias, instrucciones…">
+      </div>
+      <button class="cchk" onclick="checkout()">Confirmar Pedido</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div id="toasts"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const P = {
+  f1:'https://img02.restaurantguru.com/c7ee-Taco-Giro-Nogales-food-1.jpg',
+  f2:'https://img02.restaurantguru.com/c1fe-Taco-Giro-Nogales-dishes.jpg',
+  f3:'https://img02.restaurantguru.com/c2f5-Taco-Giro-Nogales-food.jpg',
+  f4:'https://img02.restaurantguru.com/c4a7-Taco-Giro-Nogales-meals.jpg',
+  a1:'https://img02.restaurantguru.com/c739-Restaurant-Taco-Giro-aguachile.jpg',
+  a2:'https://img02.restaurantguru.com/c214-Taco-Giro-Nogales-aguachile.jpg',
+  ms:'https://img02.restaurantguru.com/c9ed-Restaurant-Taco-Giro-mussels.jpg',
+  d1:'https://img02.restaurantguru.com/cc71-Restaurant-Taco-Giro-chocolate-mousse.jpg',
+  bv:'https://img02.restaurantguru.com/c8d7-Taco-Giro-Nogales-beverage.jpg',
+  dr:'https://img02.restaurantguru.com/c5a4-Taco-Giro-Nogales-drink.jpg',
+};
+const MENU = {
+  tacos: [
+    {id:1, name:'Taco', desc:'De carne asada, pollo, carnitas o pescado. Tortilla fresca, cebolla, cilantro y salsa casera.', price:69, badge:'Especialidad', photo:P.f1,
+     ingredients:['Tortilla de maíz','Carne asada','Cebolla','Cilantro','Salsa casera'],
+     extras:[{name:'Guacamole',price:20},{name:'Queso rallado',price:15},{name:'Crema',price:10}]},
+    {id:2, name:'Tacos de Camarón', desc:'Camarones al gusto con tortilla fresca, guacamole y salsas caseras.', price:228, photo:P.ms,
+     ingredients:['Tortilla de maíz','Camarones frescos','Guacamole','Salsa verde','Limón'],
+     extras:[{name:'Queso',price:15},{name:'Crema',price:10},{name:'Chile jalapeño',price:10}]},
+  ],
+  especiales: [
+    {id:10, name:'Carne Asada', desc:'Carne de res a la parrilla acompañada de guacamole, salsas caseras y tortillas.', price:384, badge:'Favorito', photo:P.f1,
+     ingredients:['Carne de res','Guacamole','Salsa roja','Salsa verde','Tortillas','Cebolla','Cilantro'],
+     extras:[{name:'Chiles toreados',price:15},{name:'Queso rallado',price:20},{name:'Frijoles extra',price:20}]},
+    {id:11, name:'Fajitas de Pollo', desc:'Pechuga a la parrilla con peppers, cebollas, guacamole y salsas caseras.', price:325, photo:P.f1,
+     ingredients:['Pechuga de pollo','Pimientos mixtos','Cebolla','Guacamole','Tortillas','Salsa casera'],
+     extras:[{name:'Queso fundido',price:20},{name:'Crema',price:10},{name:'Arroz extra',price:20}]},
+    {id:12, name:'Chicharrón de Atún', desc:'Atún crujiente preparado a la perfección. Incluye arroz, frijoles y salsas.', price:455, photo:P.f3,
+     ingredients:['Atún fresco','Rebozado crujiente','Arroz','Frijoles','Salsa especial','Limón'],
+     extras:[{name:'Guacamole',price:20},{name:'Crema',price:10}]},
+    {id:13, name:'Fajitas Mixtas', desc:'Combinación de carne asada y pollo con peppers, cebollas y guacamole.', price:449, photo:P.f1,
+     ingredients:['Carne asada','Pollo a la parrilla','Pimientos','Cebolla','Guacamole','Tortillas'],
+     extras:[{name:'Queso fundido',price:20},{name:'Camarones +3',price:55}]},
+    {id:14, name:'Arrachera y Camarón', desc:'Corte de arrachera y camarones a la parrilla. La combinación estrella.', price:514, badge:'Premium', photo:P.ms,
+     ingredients:['Arrachera','Camarones a la parrilla','Guacamole','Tortillas','Salsa de la casa','Cebolla cambray'],
+     extras:[{name:'Arroz extra',price:20},{name:'Frijoles extra',price:20}]},
+    {id:15, name:'Molcajete Mixto', desc:'Carne asada, pollo y mariscos en molcajete con salsa mexicana tradicional.', price:566, badge:'Para compartir', photo:P.f2,
+     ingredients:['Carne asada','Pollo','Camarones','Salsa mexicana','Queso panela','Cebolla cambray','Tortillas'],
+     extras:[{name:'Pieza de pollo extra',price:45},{name:'Camarones extra',price:55}]},
+    {id:16, name:'Burro Mexicano', desc:'Burrito de carne asada con frijoles, arroz y salsas caseras.', price:325, photo:P.f1,
+     ingredients:['Tortilla de harina','Carne asada','Frijoles','Arroz','Salsa casera'],
+     extras:[{name:'Guacamole',price:20},{name:'Queso',price:15},{name:'Crema',price:10}]},
+    {id:17, name:'Torta de Carne Asada', desc:'Torta artesanal con carne asada al gusto.', price:244, photo:P.f1,
+     ingredients:['Bolillo','Carne asada','Frijoles','Tomate','Lechuga','Cebolla','Aguacate'],
+     extras:[{name:'Queso extra',price:15},{name:'Jalapeño',price:10}]},
+    {id:18, name:'Hamburguesa', desc:'Hamburguesa preparada al momento con papas caseras.', price:234, photo:P.f1,
+     ingredients:['Pan de hamburguesa','Carne a la parrilla','Lechuga','Tomate','Cebolla','Papas caseras'],
+     extras:[{name:'Tocino',price:25},{name:'Queso extra',price:15},{name:'Huevo estrellado',price:15}]},
+    {id:19, name:'Filete de Pescado', desc:'Filete fresco acompañado de arroz, frijoles, ensalada y salsas.', price:299, photo:P.f3,
+     ingredients:['Filete de pescado','Arroz','Frijoles','Ensalada fresca','Salsa tártara','Limón'],
+     extras:[{name:'Guacamole',price:20},{name:'Salsa extra',price:10}]},
+  ],
+  mariscos: [
+    {id:20, name:'Cóctel de Camarón', desc:'Cóctel fresco con camarones, tomate, pepino, cebolla y limón.', price:318, photo:P.a2,
+     ingredients:['Camarones frescos','Tomate','Pepino','Cebolla','Limón','Salsa cóctel'],
+     extras:[{name:'Aguacate',price:20},{name:'Tostadas extra',price:15}]},
+    {id:21, name:'Cóctel Maleficio', desc:'Cóctel especial de la casa con combinación de mariscos.', price:384, badge:'Especialidad', photo:P.ms,
+     ingredients:['Camarón','Pulpo','Calamar','Pepino','Cebolla','Salsa especial de la casa'],
+     extras:[{name:'Aguacate',price:20},{name:'Tostadas',price:15}]},
+    {id:22, name:'Cóctel Campechana', desc:'Mix de camarón y pulpo en salsa de cóctel casera.', price:305, photo:P.a1,
+     ingredients:['Camarón','Pulpo','Salsa campechana','Pepino','Cebolla','Limón'],
+     extras:[{name:'Aguacate',price:20},{name:'Tostadas',price:15}]},
+    {id:23, name:'Camarones Culichi', desc:'Camarones en salsa culichi cremosa y especiada.', price:325, photo:P.ms,
+     ingredients:['Camarones frescos','Salsa culichi','Crema','Queso','Arroz','Frijoles'],
+     extras:[{name:'Tortillas extra',price:10},{name:'Arroz extra',price:20}]},
+    {id:24, name:'Camarones Empanizados', desc:'Camarones con empanizado crujiente, arroz y frijoles.', price:312, photo:P.f3,
+     ingredients:['Camarones','Empanizado crujiente','Arroz','Frijoles','Salsa tártara','Limón'],
+     extras:[{name:'Guacamole',price:20},{name:'Chile y limón',price:10}]},
+    {id:25, name:'Tostada de Ceviche', desc:'Tostada crujiente con ceviche fresco de camarón.', price:130, photo:P.f4,
+     ingredients:['Tostada','Ceviche de camarón','Aguacate','Pepino','Cebolla','Limón','Chile serrano'],
+     extras:[{name:'Aguacate extra',price:15},{name:'Tostada extra',price:15}]},
+    {id:26, name:'Filete de Pescado', desc:'Filete fresco al gusto con acompañamientos.', price:299, photo:P.f3,
+     ingredients:['Filete fresco','Arroz','Frijoles','Limón','Salsa de la casa'],
+     extras:[{name:'Guacamole',price:20},{name:'Ensalada',price:15}]},
+  ],
+  desayunos: [
+    {id:30, name:'Chilaquiles Rojos o Verdes', desc:'Tortillas crujientes en salsa vibrante con queso fresco y crema.', price:208, badge:'Favorito', photo:P.f1,
+     ingredients:['Tortillas fritas','Salsa roja o verde','Queso fresco','Crema','Cebolla'],
+     extras:[{name:'Huevo estrellado',price:20},{name:'Pollo desmenuzado',price:35},{name:'Frijoles',price:15}]},
+    {id:31, name:'Chilaquiles Mixtos', desc:'Con salsa roja y verde. La versión completa de nuestros chilaquiles.', price:208, photo:P.f1,
+     ingredients:['Tortillas fritas','Salsa roja','Salsa verde','Queso fresco','Crema','Cebolla'],
+     extras:[{name:'Huevo',price:20},{name:'Pollo desmenuzado',price:35}]},
+    {id:32, name:'Chorizo con Huevo', desc:'Chorizo frito con huevo revuelto, frijoles y tortillas.', price:208, photo:P.f1,
+     ingredients:['Chorizo','Huevo revuelto','Frijoles','Tortillas','Salsa casera'],
+     extras:[{name:'Papas caseras',price:20},{name:'Queso',price:15}]},
+    {id:33, name:'Omelette Denver', desc:'Omelette con jamón, peppers, cebolla y queso. Con papas caseras.', price:215, photo:P.f1,
+     ingredients:['Huevo','Jamón','Pimientos','Cebolla','Queso','Papas caseras'],
+     extras:[{name:'Tocino',price:20},{name:'Queso extra',price:15}]},
+    {id:34, name:'Machaca Seca con Huevo', desc:'Machaca de res desmenuzada con huevo. Desayuno sonorense tradicional.', price:215, badge:'Sonorense', photo:P.f1,
+     ingredients:['Machaca de res','Huevo','Tomate','Cebolla','Chile verde','Tortillas'],
+     extras:[{name:'Frijoles',price:15},{name:'Papas caseras',price:20}]},
+    {id:35, name:'Pancakes con Tocino', desc:'Pancakes esponjosos con tocino crujiente y miel de maple.', price:215, photo:P.f1,
+     ingredients:['Pancakes','Tocino crujiente','Miel de maple','Mantequilla'],
+     extras:[{name:'Fruta fresca',price:20},{name:'Crema batida',price:15}]},
+    {id:36, name:'Burro de Desayuno', desc:'Burrito de desayuno con huevo, frijoles y carne.', price:182, photo:P.f1,
+     ingredients:['Tortilla de harina','Huevo revuelto','Frijoles','Carne','Salsa casera'],
+     extras:[{name:'Queso',price:15},{name:'Crema',price:10}]},
+  ],
+  combinaciones: [
+    {id:40, name:'Chile Relleno', desc:'Poblano relleno de queso bañado en salsa roja casera.', price:260, photo:P.f2,
+     ingredients:['Chile poblano','Queso','Salsa roja','Arroz','Frijoles','Crema'],
+     extras:[{name:'Crema extra',price:10},{name:'Queso extra',price:15}]},
+    {id:41, name:'Enchiladas de Pollo', desc:'Enchiladas de pollo con salsa de la casa y queso.', price:215, photo:P.f1,
+     ingredients:['Tortillas','Pollo desmenuzado','Salsa roja','Queso','Crema','Cebolla'],
+     extras:[{name:'Frijoles',price:15},{name:'Arroz extra',price:15}]},
+    {id:42, name:'Enchiladas Suizas', desc:'Enchiladas bañadas en crema y queso derretido.', price:254, photo:P.f1,
+     ingredients:['Tortillas','Pollo','Crema','Queso derretido','Salsa verde'],
+     extras:[{name:'Arroz',price:15},{name:'Frijoles',price:15}]},
+    {id:43, name:'Enchilada Culichi', desc:'Enchilada en salsa culichi especial.', price:272, badge:'Especial', photo:P.f1,
+     ingredients:['Tortilla','Relleno de pollo','Salsa culichi','Queso','Crema'],
+     extras:[{name:'Frijoles',price:15},{name:'Arroz',price:15}]},
+    {id:44, name:'Enchilada de Queso y Taco de Pollo', desc:'Combinación de enchilada de queso con taco de pollo.', price:241, photo:P.f1,
+     ingredients:['Enchilada de queso','Taco de pollo','Salsa roja','Crema','Cebolla'],
+     extras:[{name:'Guacamole',price:20}]},
+    {id:45, name:'Burro Mojado', desc:'Burrito bañado en salsa roja con queso fundido.', price:221, photo:P.f1,
+     ingredients:['Tortilla de harina','Carne asada','Salsa roja','Queso fundido','Frijoles'],
+     extras:[{name:'Crema',price:10},{name:'Guacamole',price:20}]},
+  ],
+  caldos: [
+    {id:50, name:'Cocido', desc:'Caldo de res con verduras de temporada. Reconfortante y nutritivo.', price:267, photo:P.f2,
+     ingredients:['Caldo de res','Zanahoria','Papa','Calabaza','Ejotes','Elote','Hueso de res'],
+     extras:[{name:'Tortillas extra',price:10},{name:'Salsa extra',price:10}]},
+    {id:51, name:'Caldo de Pollo', desc:'Caldo casero de pollo con verduras y tortillas.', price:260, photo:P.f2,
+     ingredients:['Caldo de pollo','Pieza de pollo','Zanahoria','Papa','Cebolla','Tortillas'],
+     extras:[{name:'Arroz',price:15},{name:'Salsa extra',price:10}]},
+    {id:52, name:'Menudo', desc:'Menudo rojo tradicional. Ideal para el fin de semana.', price:254, badge:'Fin de semana', photo:P.f2,
+     ingredients:['Panza de res','Caldo rojo','Orégano','Cebolla','Limón','Chile','Tortillas'],
+     extras:[{name:'Pata extra',price:25}]},
+    {id:53, name:'Carne en su Jugo', desc:'Carne de res en su propio jugo con frijoles y tocino.', price:323, badge:'Especialidad', photo:P.f1,
+     ingredients:['Carne de res','Tocino','Frijoles','Caldo de res','Cilantro','Cebolla','Tomatillo'],
+     extras:[{name:'Tortillas extra',price:10},{name:'Aguacate',price:20}]},
+  ],
+  acomp: [
+    {id:60, name:'Guacamole Fresco', desc:'Hecho al momento por nuestro maestro Brayan. Aguacate, tomate, cebolla, cilantro y limón.', price:75, badge:'Estrella', photo:P.f4,
+     ingredients:['Aguacate','Tomate','Cebolla','Cilantro','Limón','Chile serrano'],
+     extras:[{name:'Tostadas extra',price:15},{name:'Chips extra',price:15}]},
+    {id:61, name:'Papas Caseras', desc:'Papas fritas al estilo casero. Crujientes por fuera, suaves por dentro.', price:75, photo:P.f1,
+     ingredients:['Papa','Aceite','Sal','Especias de la casa'],
+     extras:[{name:'Queso fundido',price:20},{name:'Tocino',price:20}]},
+    {id:62, name:'Papa Rallada Hashbrown', desc:'Papa rallada frita estilo hashbrown.', price:65, photo:P.f1,
+     ingredients:['Papa rallada','Mantequilla','Sal','Pimienta'],
+     extras:[{name:'Huevo estrellado',price:15},{name:'Queso',price:15}]},
+  ],
+  postres: [
+    {id:70, name:'Flan de la Casa', desc:'Flan clásico mexicano, suave y con caramelo casero. La receta de siempre.', price:80, photo:P.d1,
+     ingredients:['Huevo','Leche condensada','Caramelo casero','Vainilla'],
+     extras:[{name:'Crema extra',price:10}]},
+    {id:71, name:'Churros', desc:'Crujientes por fuera, suaves por dentro. Con cajeta artesanal.', price:115, photo:P.d1,
+     ingredients:['Masa de churro','Azúcar','Canela','Cajeta artesanal'],
+     extras:[{name:'Chocolate caliente',price:20},{name:'Cajeta extra',price:15}]},
+  ],
+  bebidas: [
+    {id:80, name:'Agua Fresca', desc:'Jamaica, horchata o limón. Preparada al momento.', price:120, photo:P.dr,
+     ingredients:['Agua natural','Jamaica / Horchata / Limón','Azúcar natural'],
+     extras:[{name:'Tamaño grande',price:20}]},
+    {id:81, name:'Jugo de Naranja Natural', desc:'Jugo de naranja exprimido al momento.', price:160, photo:P.dr,
+     ingredients:['Naranja fresca exprimida','Sin azúcar añadida'],
+     extras:[{name:'Zanahoria',price:15},{name:'Jengibre',price:10}]},
+  ],
+};
+
+// ── CART ──────────────────────────────────────────────────────────
+let cart = [];
+function ctotals(){ const s=cart.reduce((a,i)=>a+i.price*i.qty,0); return{s,t:s+35}; }
+function ubadge(){ const n=cart.reduce((a,i)=>a+i.qty,0); document.getElementById('cBadge').textContent=n; const e=document.getElementById('cCount2'); if(e)e.textContent=n; }
+function addToCart(cat,id){
+  let item; for(const c of Object.values(MENU)){ item=c.find(i=>i.id===id); if(item)break; }
+  if(!item)return;
+  const ex=cart.find(i=>i.id===id);
+  ex?ex.qty++:cart.push({...item,qty:1});
+  ubadge(); renderCart(); toast(`${item.name} agregado`,`suc`);
+}
+function updQty(id,d){ const x=cart.findIndex(i=>i.id===id); if(x<0)return; cart[x].qty+=d; if(cart[x].qty<=0)cart.splice(x,1); ubadge(); renderCart(); }
+function renderCart(){
+  const body=document.getElementById('cBody'); const foot=document.getElementById('cFoot');
+  if(!cart.length){ body.innerHTML=`<div class="cempty"><div class="eico">—</div><p>Tu carrito está vacío</p><p style="font-size:.72rem;margin-top:.5rem;color:var(--cream3)">Agrega platillos desde el menú</p></div>`; foot.style.display='none'; return; }
+  foot.style.display='block';
+  const {s,t}=ctotals();
+  body.innerHTML=cart.map(i=>`<div class="ci"><div class="ci-ico">${i.icon||'🍽️'}</div><div class="ci-info"><div class="ci-nm">${i.name}</div>${i.notes?`<div style="font-size:.68rem;color:var(--cream3);margin-top:.15rem;font-style:italic;line-height:1.4">📝 ${i.notes}</div>`:''}<div class="ci-pr">$${i.price} MXN × ${i.qty} = $${i.price*i.qty} MXN</div></div><div class="ci-qty"><button class="qb" onclick="updQty(${i.id},-1)">−</button><span class="qn">${i.qty}</span><button class="qb" onclick="updQty(${i.id},1)">+</button></div><button class="ci-rm" onclick="updQty(${i.id},${-i.qty})">✕</button></div>`).join('');
+  document.getElementById('cSub').textContent=`$${s} MXN`;
+  document.getElementById('cTot').textContent=`$${t} MXN`;
+}
+function openCart(){ document.getElementById('cDrw').classList.add('open'); document.getElementById('cOv').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeCart(){ document.getElementById('cDrw').classList.remove('open'); document.getElementById('cOv').classList.remove('open'); document.body.style.overflow=''; }
+async function checkout(){
+  const nom   = document.getElementById('cNom').value.trim();
+  const tel   = document.getElementById('cTel').value.trim();
+  const addr  = document.getElementById('cAddr').value.trim();
+  const notes = document.getElementById('cDelivNotes').value.trim();
+  if(!nom)  { toast('Ingresa tu nombre','err');   document.getElementById('cNom').focus();  return; }
+  if(tel.replace(/\D/g,'').length<7){ toast('Ingresa un teléfono válido','err'); document.getElementById('cTel').focus(); return; }
+  if(!addr) { toast('Ingresa tu dirección','err'); document.getElementById('cAddr').focus(); return; }
+
+  const btn = document.querySelector('.cchk');
+  const origTxt = btn.textContent;
+  btn.textContent = 'Enviando…'; btn.disabled = true;
+
+  const payload = {
+    cliente_nombre:    nom,
+    cliente_telefono:  tel,
+    cliente_direccion: addr,
+    cliente_notas:     notes,
+    items: cart.map(i => ({ nombre: i.name, cantidad: i.qty, precio_unitario: i.price, subtotal: i.price * i.qty })),
+    total: ctotals().t,
+  };
+
+  try {
+    const r = await fetch('/api/pedidos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Error del servidor');
+    ['cNom','cTel','cAddr','cDelivNotes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    cart=[]; ubadge(); renderCart(); closeCart();
+    toast(`¡${d.mensaje || 'Pedido confirmado!'}`, 'suc');
+  } catch(e) {
+    toast('No se pudo enviar el pedido. ¿Está el servidor encendido?', 'err');
+  } finally {
+    btn.textContent = origTxt; btn.disabled = false;
+  }
+}
+
+// ── MENU RENDER ────────────────────────────────────────────────────
+function renderMenuList(cat){
+  const items=MENU[cat]; if(!items)return;
+  const el=document.getElementById(`ml-${cat}`); if(!el)return;
+  el.innerHTML=items.map(i=>`
+    <div class="menu-item" onclick="openDish(${i.id})">
+      <div class="mi-thumb">
+        <img src="${i.photo||P.f1}" alt="${i.name}" loading="lazy"
+             onerror="this.parentElement.style.background='var(--surf3)';this.style.display='none'">
+      </div>
+      <div class="mi-info">
+        ${i.badge?`<div class="mi-badge">${i.badge}</div>`:''}
+        <div class="mi-name">${i.name}</div>
+        <div class="mi-desc">${i.desc}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;margin-left:.75rem">
+        <div class="mi-price">$${i.price}<small>MXN</small></div>
+        <button class="mi-add" onclick="event.stopPropagation();openDish(${i.id})">+ Agregar</button>
+      </div>
+    </div>
+  `).join('');
+}
+function switchTab(cat){
+  document.querySelectorAll('.mtab').forEach(b=>{ b.classList.toggle('on',b.dataset.p===cat); });
+  document.querySelectorAll('.menu-panel').forEach(p=>{ p.classList.toggle('on',p.id===`p-${cat}`); });
+}
+document.querySelectorAll('.mtab').forEach(btn=>{
+  btn.addEventListener('click',()=>switchTab(btn.dataset.p));
+});
+Object.keys(MENU).forEach(cat=>renderMenuList(cat));
+
+// ── DISH MODAL ─────────────────────────────────────────────────────
+let _cartId=1000, dishState={item:null,qty:1,addedExtras:[]};
+function _dishIcon(id){return id<10?'🌮':id<20?'🍽️':id<30?'🦐':id<40?'🍳':id<50?'🌯':id<60?'🫕':id<70?'🥑':id<80?'🍮':'🥤';}
+function openDish(id){
+  let item=null;
+  for(const arr of Object.values(MENU)){const f=arr.find(i=>i.id===id);if(f){item=f;break;}}
+  if(!item)return;
+  dishState={item,qty:1,addedExtras:[]};
+  document.getElementById('dmImg').src=item.photo||P.f1;
+  document.getElementById('dmImg').alt=item.name;
+  const badge=document.getElementById('dmBadge');
+  badge.textContent=item.badge||''; badge.style.display=item.badge?'':'none';
+  document.getElementById('dmName').textContent=item.name;
+  document.getElementById('dmDesc').textContent=item.desc;
+  document.getElementById('dmQty').textContent='1';
+  document.getElementById('dmIngrs').innerHTML=(item.ingredients||[]).map(g=>
+    `<span class="chip" onclick="toggleIngr(this)">${g}</span>`
+  ).join('');
+  const hasExtras=item.extras&&item.extras.length;
+  document.getElementById('dmExtrasLbl').style.display=hasExtras?'':'none';
+  document.getElementById('dmExtras').innerHTML=hasExtras?item.extras.map(e=>
+    `<span class="chip extra" onclick="toggleExtra(this,${e.price})">${e.name} <em style="color:var(--gold);font-style:normal">+$${e.price}</em></span>`
+  ).join(''):'';
+  document.getElementById('dmNotes').value='';
+  updateDishPrice();
+  document.getElementById('dishOv').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDish(){
+  document.getElementById('dishOv').classList.remove('open');
+  document.body.style.overflow='';
+}
+function toggleIngr(el){el.classList.toggle('off');}
+function toggleExtra(el,price){
+  el.classList.toggle('on');
+  if(el.classList.contains('on')){dishState.addedExtras.push(price);}
+  else{const idx=dishState.addedExtras.indexOf(price);if(idx>-1)dishState.addedExtras.splice(idx,1);}
+  updateDishPrice();
+}
+function dishQtyChange(d){
+  dishState.qty=Math.max(1,dishState.qty+d);
+  document.getElementById('dmQty').textContent=dishState.qty;
+  updateDishPrice();
+}
+function updateDishPrice(){
+  const extra=dishState.addedExtras.reduce((s,p)=>s+p,0);
+  document.getElementById('dmTotalP').textContent=(dishState.item.price+extra)*dishState.qty;
+}
+function addDishToCart(){
+  const{item,qty,addedExtras}=dishState;
+  const extraCost=addedExtras.reduce((s,p)=>s+p,0);
+  const unitPrice=item.price+extraCost;
+  const extraNames=Array.from(document.querySelectorAll('#dmExtras .chip.on')).map(e=>e.firstChild.textContent.trim());
+  const name=item.name+(extraNames.length?' + '+extraNames.join(', '):'');
+  const notes=document.getElementById('dmNotes').value.trim();
+  cart.push({id:_cartId++,name,price:unitPrice,qty,icon:_dishIcon(item.id),notes});
+  ubadge();renderCart();closeDish();
+  toast(`${item.name} agregado al carrito`,'suc');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDish();});
+
+// ── RESERVATION ────────────────────────────────────────────────────
+async function submitRes(){
+  const checks=[
+    {id:'rNom',  err:'e-rNom',  ok:v=>v.trim().length>=2},
+    {id:'rEmail',err:'e-rEmail',ok:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
+    {id:'rTel',  err:'e-rTel',  ok:v=>v.trim().length>=7},
+    {id:'rFecha',err:'e-rFecha',ok:v=>!!v},
+    {id:'rHora', err:'e-rHora', ok:v=>!!v},
+    {id:'rPax',  err:'e-rPax',  ok:v=>!!v},
+  ];
+  let ok=true;
+  checks.forEach(c=>{ const el=document.getElementById(c.id); const v=c.ok(el.value); el.classList.toggle('inp-err',!v); document.getElementById(c.err).classList.toggle('show',!v); if(!v)ok=false; });
+  if(!ok){ toast('Completa todos los campos requeridos','err'); return; }
+
+  const btn = document.querySelector('.form-sbmt');
+  const origTxt = btn.textContent;
+  btn.textContent = 'Enviando…'; btn.disabled = true;
+
+  const payload = {
+    cliente_nombre:   document.getElementById('rNom').value.trim(),
+    cliente_telefono: document.getElementById('rTel').value.trim(),
+    cliente_email:    document.getElementById('rEmail').value.trim(),
+    fecha_reserva:    document.getElementById('rFecha').value,
+    hora_reserva:     document.getElementById('rHora').value,
+    numero_personas:  parseInt(document.getElementById('rPax').value) || 1,
+    mesa_preferencia: document.getElementById('rMesa').value,
+    notas:            document.getElementById('rNotas').value.trim(),
+  };
+
+  try {
+    const r = await fetch('/api/reservaciones', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Error del servidor');
+    document.getElementById('rForm').style.display = 'none';
+    document.getElementById('rId').textContent = 'Confirmación: ' + d.numero_reserva;
+    document.getElementById('rSuc').classList.add('show');
+    toast('¡Reservación registrada!', 'suc');
+  } catch(e) {
+    toast('No se pudo enviar. ¿Está el servidor encendido?', 'err');
+  } finally {
+    btn.textContent = origTxt; btn.disabled = false;
+  }
+}
+function resetRes(){
+  document.getElementById('rForm').style.display='block';
+  document.getElementById('rSuc').classList.remove('show');
+  ['rNom','rEmail','rTel','rFecha','rHora','rPax','rMesa','rNotas'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ── DELIVERY ────────────────────────────────────────────────────────
+function selDel(el){ document.querySelectorAll('.del-card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function goRappi(){ toast('Búscanos como "Taco Giro" en la app Rappi','suc'); }
+function goWA(){ window.open('https://wa.me/526314540422?text=Hola,%20quiero%20hacer%20un%20pedido%20a%20domicilio','_blank'); }
+
+// ── NAV ─────────────────────────────────────────────────────────────
+window.addEventListener('scroll',()=>{ document.getElementById('nav').classList.toggle('stuck',scrollY>60); },{passive:true});
+function toggleNav(){ document.getElementById('mobMenu').classList.toggle('open'); document.getElementById('mobOv').classList.toggle('open'); }
+
+// ── PARALLAX ────────────────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  document.querySelectorAll('.hslide').forEach(s=>{
+    s.style.backgroundPositionY=`calc(40% + ${scrollY*0.15}px)`;
+  });
+},{passive:true});
+
+// ── HERO SLIDESHOW ──────────────────────────────────────────────────
+(function(){
+  const slides=document.querySelectorAll('.hslide');
+  if(slides.length<2)return;
+  let cur=0;
+  setInterval(()=>{
+    slides[cur].classList.remove('on');
+    cur=(cur+1)%slides.length;
+    slides[cur].classList.add('on');
+  },5000);
+})();
+
+// ── SCROLL REVEAL ───────────────────────────────────────────────────
+const io=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); } }); },{threshold:0.1});
+document.querySelectorAll('.rv,.rvL,.rvR,.stg').forEach(el=>io.observe(el));
+
+// ── COUNTERS ────────────────────────────────────────────────────────
+const cio=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ animCount(e.target); cio.unobserve(e.target); } }); },{threshold:0.5});
+document.querySelectorAll('.snum[data-target]').forEach(el=>cio.observe(el));
+function animCount(el){
+  const target=parseFloat(el.dataset.target);
+  const isDec=el.hasAttribute('data-dec');
+  const dur=2000; const t0=performance.now();
+  (function tick(now){
+    const p=Math.min((now-t0)/dur,1);
+    const e=1-Math.pow(1-p,3);
+    el.textContent=isDec?(target*e/10).toFixed(1):Math.round(target*e);
+    if(p<1)requestAnimationFrame(tick);
+  })(t0);
+}
+
+// ── TOAST ────────────────────────────────────────────────────────────
+function toast(msg,type=''){
+  const c=document.getElementById('toasts');
+  const el=document.createElement('div');
+  el.className=`tst ${type}`;
+  el.innerHTML=`<span>${type==='suc'?'✓':type==='err'?'✕':'·'}</span><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),300); },3500);
+}
+
+// ── INIT ────────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{ setTimeout(()=>document.getElementById('loader').classList.add('out'),1500); });
+document.getElementById('rFecha').min=new Date().toISOString().split('T')[0];
+ubadge();
+</script>
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Taco Giro — Panel Admin</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080603;--surf:#111009;--surf2:#191510;--surf3:#221d17;
+  --gold:#C9A84C;--gold2:#DFC268;--cream:#F0EBE2;--cream2:rgba(240,235,226,.65);--cream3:rgba(240,235,226,.35);
+  --bd:rgba(240,235,226,.08);
+  --red:#e74c3c;--red-bg:#2d0505;
+  --orange:#f39c12;--orange-bg:#2d1a00;
+  --blue:#3498db;--blue-bg:#00213d;
+  --purple:#9b59b6;--purple-bg:#1a0a2d;
+  --green:#27ae60;--green-bg:#032d0f;
+  --gray:#666;--gray-bg:#141414;
+}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--cream);font-size:15px}
+button,a{font-family:inherit;cursor:pointer}
+a{text-decoration:none;color:inherit}
+
+/* ── LOGIN ──────────────────────────────────────────────────── */
+#login{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;z-index:100}
+.login-logo{font-size:2.2rem;font-weight:300;letter-spacing:.2em;color:var(--cream);margin-bottom:.4rem}
+.login-logo em{color:var(--gold);font-style:normal}
+.login-sub{font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cream3);margin-bottom:3rem}
+.login-box{width:100%;max-width:340px;background:var(--surf);border:1px solid var(--bd);padding:2rem}
+.lf-label{font-size:.62rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--cream3);display:block;margin-bottom:.45rem;margin-top:1rem}
+.lf-label:first-child{margin-top:0}
+.lf-input{width:100%;padding:.85rem 1rem;border:1px solid var(--bd);background:var(--surf2);color:var(--cream);font-size:.95rem;outline:none;transition:border-color .25s}
+.lf-input:focus{border-color:var(--gold)}
+.lf-btn{width:100%;margin-top:1.5rem;padding:.95rem;background:var(--gold);color:var(--bg);font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;transition:background .25s}
+.lf-btn:hover{background:var(--gold2)}
+.lf-err{font-size:.78rem;color:var(--red);margin-top:.75rem;text-align:center;display:none}
+.lf-err.on{display:block}
+
+/* ── APP SHELL ───────────────────────────────────────────── */
+#app{display:none;flex-direction:column;height:100vh}
+#app.on{display:flex}
+#hdr{background:var(--surf);border-bottom:1px solid var(--bd);padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.hdr-logo{font-size:1.1rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+.hdr-logo em{color:var(--gold);font-style:normal}
+.hdr-r{display:flex;align-items:center;gap:.75rem}
+.hdr-user{font-size:.72rem;color:var(--cream3)}
+.hdr-logout{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);background:none;border:1px solid var(--bd);padding:.35rem .75rem;cursor:pointer;transition:all .25s}
+.hdr-logout:hover{border-color:var(--red);color:var(--red)}
+
+/* ── STATS BAR ───────────────────────────────────────────── */
+#statsBar{background:var(--surf2);border-bottom:1px solid var(--bd);display:flex;flex-shrink:0}
+.stat{flex:1;padding:.65rem .5rem;text-align:center;border-right:1px solid var(--bd)}
+.stat:last-child{border-right:none}
+.stat-n{font-size:1.4rem;font-weight:700;line-height:1;color:var(--gold)}
+.stat-l{font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cream3);margin-top:.2rem}
+
+/* ── TABS ────────────────────────────────────────────────── */
+#tabBar{background:var(--surf);border-bottom:1px solid var(--bd);display:flex;flex-shrink:0}
+.tab-btn{flex:1;padding:.9rem .5rem;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--cream3);background:none;border:none;border-bottom:2px solid transparent;transition:all .25s;position:relative}
+.tab-btn.on{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-badge{position:absolute;top:.4rem;right:.75rem;background:var(--red);color:#fff;font-size:.58rem;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;display:none}
+.tab-badge.on{display:inline-flex}
+
+/* ── CONTENT ─────────────────────────────────────────────── */
+#content{flex:1;overflow-y:auto;padding:.85rem;display:flex;flex-direction:column;gap:.7rem}
+.tab-section{display:none}
+.tab-section.on{display:contents}
+.empty-state{text-align:center;padding:4rem 1rem;color:var(--cream3);font-size:.85rem}
+.empty-state .eico{font-size:2.5rem;margin-bottom:.75rem}
+
+/* ── CARD ────────────────────────────────────────────────── */
+.card{border-radius:0;border:1px solid;padding:1rem;border-left-width:3px;transition:opacity .3s}
+.card.estado-pendiente{background:var(--red-bg);border-color:var(--red)}
+.card.estado-en_preparacion{background:var(--orange-bg);border-color:var(--orange)}
+.card.estado-listo{background:var(--blue-bg);border-color:var(--blue)}
+.card.estado-en_camino{background:var(--purple-bg);border-color:var(--purple)}
+.card.estado-entregado{background:var(--green-bg);border-color:var(--green);opacity:.7}
+.card.estado-confirmada{background:var(--green-bg);border-color:var(--green);opacity:.7}
+.card.estado-cancelado,.card.estado-cancelada,.card.estado-no_presento{background:var(--gray-bg);border-color:var(--gray);opacity:.55}
+
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.75rem}
+.card-num{font-size:.95rem;font-weight:700;letter-spacing:.04em;color:var(--cream)}
+.card-time{font-size:.68rem;color:var(--cream3);white-space:nowrap;padding-top:.1rem}
+.estado-chip{display:inline-block;font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.2rem .6rem;border-radius:2px;margin-bottom:.5rem}
+.chip-pendiente{background:var(--red);color:#fff}
+.chip-en_preparacion{background:var(--orange);color:#000}
+.chip-listo{background:var(--blue);color:#fff}
+.chip-en_camino{background:var(--purple);color:#fff}
+.chip-entregado{background:var(--green);color:#fff}
+.chip-confirmada{background:var(--green);color:#fff}
+.chip-cancelado,.chip-cancelada,.chip-no_presento{background:var(--gray);color:#ccc}
+
+.card-client{font-size:.92rem;font-weight:600;color:var(--cream);margin-bottom:.15rem}
+.card-phone{font-size:.82rem;color:var(--gold);margin-bottom:.65rem}
+.card-phone a{color:var(--gold)}
+.card-divider{border:none;border-top:1px solid rgba(255,255,255,.07);margin:.65rem 0}
+.card-items{display:flex;flex-direction:column;gap:.2rem;margin-bottom:.65rem}
+.card-item{display:flex;justify-content:space-between;font-size:.82rem;color:var(--cream2)}
+.card-item-name{flex:1}
+.card-item-price{color:var(--gold);font-weight:600;white-space:nowrap;padding-left:.5rem}
+.card-meta{display:flex;flex-direction:column;gap:.2rem;margin-bottom:.65rem}
+.card-meta-row{font-size:.78rem;color:var(--cream3);display:flex;gap:.4rem}
+.card-meta-row strong{color:var(--cream2);flex-shrink:0}
+.card-total{display:flex;justify-content:space-between;align-items:center;font-size:.92rem;font-weight:700}
+.card-total span:last-child{color:var(--gold);font-size:1.05rem}
+.card-notes{font-size:.78rem;color:var(--cream3);font-style:italic;margin-top:.25rem}
+.card-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.85rem}
+.btn-action{flex:1;min-width:100px;padding:.7rem .5rem;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.3rem;border-radius:0;text-decoration:none;text-align:center}
+.btn-prep{background:var(--orange);color:#000}
+.btn-prep:hover{background:#e67e22}
+.btn-listo{background:var(--blue);color:#fff}
+.btn-listo:hover{background:#2980b9}
+.btn-camino{background:var(--purple);color:#fff}
+.btn-camino:hover{background:#8e44ad}
+.btn-entregado{background:var(--green);color:#fff}
+.btn-entregado:hover{background:#229954}
+.btn-confirmar{background:var(--green);color:#fff}
+.btn-confirmar:hover{background:#229954}
+.btn-llamar{background:var(--gold);color:var(--bg)}
+.btn-llamar:hover{background:var(--gold2)}
+.btn-cancel{background:#333;color:#ccc}
+.btn-cancel:hover{background:#555}
+
+/* ── TOAST ───────────────────────────────────────────────── */
+#toasts{position:fixed;top:1rem;right:1rem;left:1rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+.tst{background:var(--surf2);border:1px solid var(--bd);border-left:3px solid var(--gold);padding:.8rem 1rem;font-size:.82rem;animation:tstin .3s ease}
+.tst.err{border-left-color:var(--red)}
+.tst.ok{border-left-color:var(--green)}
+@keyframes tstin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* ── BLINK NUEVA ORDEN ───────────────────────────────────── */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.card.nueva{animation:blink .6s ease 3}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(min-width:600px){
+  #content{max-width:700px;margin:0 auto;width:100%}
+  .card-actions{flex-wrap:nowrap}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ─────────────────────────────────────────────── -->
+<div id="login">
+  <div class="login-logo">Taco <em>Giro</em></div>
+  <div class="login-sub">Panel de administración</div>
+  <div class="login-box">
+    <label class="lf-label">Usuario</label>
+    <input class="lf-input" id="lUser" type="text" placeholder="admin" autocomplete="username">
+    <label class="lf-label">Contraseña</label>
+    <input class="lf-input" id="lPass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="lf-btn" id="lBtn" onclick="doLogin()">Entrar</button>
+    <div class="lf-err" id="lErr">Usuario o contraseña incorrectos</div>
+  </div>
+</div>
+
+<!-- ── APP ───────────────────────────────────────────────── -->
+<div id="app">
+  <div id="hdr">
+    <div class="hdr-logo">Taco <em>Giro</em></div>
+    <div class="hdr-r">
+      <span class="hdr-user" id="hdrUser"></span>
+      <button class="hdr-logout" onclick="logout()">Salir</button>
+    </div>
+  </div>
+
+  <div id="statsBar">
+    <div class="stat"><div class="stat-n" id="sNuevos">0</div><div class="stat-l">Nuevos</div></div>
+    <div class="stat"><div class="stat-n" id="sPrep">0</div><div class="stat-l">Preparando</div></div>
+    <div class="stat"><div class="stat-n" id="sHoy">0</div><div class="stat-l">Hoy</div></div>
+    <div class="stat"><div class="stat-n" id="sRes">0</div><div class="stat-l">Reservas pend.</div></div>
+  </div>
+
+  <div id="tabBar">
+    <button class="tab-btn on" id="tabBtnPedidos"     onclick="switchTab('pedidos')">
+      Pedidos <span class="tab-badge" id="badgePedidos"></span>
+    </button>
+    <button class="tab-btn"    id="tabBtnReservaciones" onclick="switchTab('reservaciones')">
+      Reservaciones <span class="tab-badge" id="badgeReservas"></span>
+    </button>
+  </div>
+
+  <div id="content">
+    <div class="tab-section on" id="secPedidos">
+      <div class="empty-state" id="emptyPedidos"><div class="eico">🌮</div>Sin pedidos activos</div>
+    </div>
+    <div class="tab-section" id="secReservaciones">
+      <div class="empty-state" id="emptyReservas"><div class="eico">📅</div>Sin reservaciones</div>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+// ── ESTADO ────────────────────────────────────────────────────────
+let TOKEN = localStorage.getItem('tg_token') || '';
+let pedidos = [], reservaciones = [];
+let audioCtx = null;
+let curTab = 'pedidos';
+
+// ── AUDIO ─────────────────────────────────────────────────────────
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function beep(freq = 880, dur = 0.18) {
+  try {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    o.start(); o.stop(audioCtx.currentTime + dur);
+  } catch(e){}
+}
+function playNewOrder() {
+  beep(880, 0.15);
+  setTimeout(() => beep(1100, 0.15), 200);
+  setTimeout(() => beep(1320, 0.25), 400);
+}
+function playUpdate() { beep(660, 0.12); }
+
+// ── LOGIN / AUTH ──────────────────────────────────────────────────
+async function doLogin() {
+  initAudio();
+  const usuario  = document.getElementById('lUser').value.trim();
+  const password = document.getElementById('lPass').value.trim();
+  document.getElementById('lErr').classList.remove('on');
+  document.getElementById('lBtn').textContent = 'Entrando…';
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ usuario, password })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Error');
+    TOKEN = d.token;
+    localStorage.setItem('tg_token', TOKEN);
+    document.getElementById('hdrUser').textContent = d.nombre;
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').classList.add('on');
+    connectSocket();
+    await Promise.all([loadPedidos(), loadReservaciones()]);
+  } catch(e) {
+    document.getElementById('lErr').classList.add('on');
+    document.getElementById('lBtn').textContent = 'Entrar';
+  }
+}
+
+function logout() {
+  TOKEN = ''; localStorage.removeItem('tg_token');
+  location.reload();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login').style.display !== 'none') doLogin();
+});
+
+// ── SOCKET.IO ─────────────────────────────────────────────────────
+function connectSocket() {
+  const socket = io();
+
+  socket.on('nuevo_pedido', pedido => {
+    playNewOrder();
+    toast(`🔴 Nuevo pedido: ${pedido.numero_orden} — ${pedido.cliente_nombre}`, 'err');
+    // Vibrar si es móvil
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    pedidos.unshift(pedido);
+    renderPedidos();
+    updateStats();
+    // Hacer parpadear la card
+    setTimeout(() => {
+      const card = document.getElementById('card-p-' + pedido.id);
+      if (card) card.classList.add('nueva');
+    }, 100);
+  });
+
+  socket.on('pedido_actualizado', ({ id, numero_orden, estado_nuevo }) => {
+    playUpdate();
+    const p = pedidos.find(p => p.id === id);
+    if (p) { p.estado = estado_nuevo; renderPedidos(); updateStats(); }
+    toast(`Pedido ${numero_orden} → ${LABELS[estado_nuevo] || estado_nuevo}`);
+  });
+
+  socket.on('nueva_reservacion', res => {
+    playNewOrder();
+    toast(`📅 Nueva reserva: ${res.numero_reserva} — ${res.cliente_nombre}`, 'ok');
+    reservaciones.unshift(res);
+    renderReservaciones();
+    updateStats();
+  });
+
+  socket.on('reservacion_actualizada', ({ id, numero_reserva, estado_nuevo }) => {
+    playUpdate();
+    const r = reservaciones.find(r => r.id === id);
+    if (r) { r.estado = estado_nuevo; renderReservaciones(); updateStats(); }
+    toast(`Reserva ${numero_reserva} → ${LABELS[estado_nuevo] || estado_nuevo}`);
+  });
+}
+
+// ── CARGA INICIAL ─────────────────────────────────────────────────
+async function api(path, opts = {}) {
+  const r = await fetch(path, {
+    ...opts,
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN, ...(opts.headers||{}) }
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function loadPedidos() {
+  const d = await api('/api/pedidos');
+  pedidos = d.pedidos;
+  renderPedidos(); updateStats();
+}
+
+async function loadReservaciones() {
+  const d = await api('/api/reservaciones');
+  reservaciones = d.reservaciones;
+  renderReservaciones(); updateStats();
+}
+
+// ── LABELS Y COLORES ──────────────────────────────────────────────
+const LABELS = {
+  pendiente:       '🔴 Nuevo',
+  en_preparacion:  '🟡 Preparando',
+  listo:           '🔵 Listo',
+  en_camino:       '🟣 En camino',
+  entregado:       '🟢 Entregado',
+  cancelado:       '⚫ Cancelado',
+  confirmada:      '🟢 Confirmada',
+  cancelada:       '⚫ Cancelada',
+  no_presento:     '🔴 No se presentó',
+};
+
+function timeAgo(iso) {
+  const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (diff < 60) return `hace ${diff}s`;
+  if (diff < 3600) return `hace ${Math.floor(diff/60)}min`;
+  if (diff < 86400) return `hace ${Math.floor(diff/3600)}h`;
+  return new Date(iso).toLocaleDateString('es-MX', {day:'2-digit',month:'short'});
+}
+
+// ── RENDER PEDIDOS ────────────────────────────────────────────────
+function renderPedidos() {
+  const sec = document.getElementById('secPedidos');
+  const empty = document.getElementById('emptyPedidos');
+  // Mostrar pedidos no terminados primero, luego terminados
+  const activos   = pedidos.filter(p => !['entregado','cancelado'].includes(p.estado));
+  const cerrados  = pedidos.filter(p =>  ['entregado','cancelado'].includes(p.estado));
+  const lista     = [...activos, ...cerrados];
+
+  if (!lista.length) { empty.style.display = ''; Array.from(sec.querySelectorAll('.card')).forEach(c=>c.remove()); return; }
+  empty.style.display = 'none';
+
+  // Sincronizar DOM (agregar/actualizar cards)
+  lista.forEach(p => {
+    let card = document.getElementById('card-p-' + p.id);
+    if (!card) {
+      card = document.createElement('div');
+      card.id = 'card-p-' + p.id;
+      sec.appendChild(card);
+    }
+    card.className = `card estado-${p.estado}`;
+    card.innerHTML = buildPedidoCard(p);
+  });
+
+  // Eliminar cards que ya no existen
+  sec.querySelectorAll('.card').forEach(c => {
+    const id = parseInt(c.id.replace('card-p-',''));
+    if (!lista.find(p => p.id === id)) c.remove();
+  });
+
+  // Badge en tab
+  const n = activos.length;
+  const b = document.getElementById('badgePedidos');
+  b.textContent = n; b.classList.toggle('on', n > 0);
+}
+
+function buildPedidoCard(p) {
+  const items = Array.isArray(p.items) ? p.items : [];
+  const itemsHtml = items.map(i => `
+    <div class="card-item">
+      <span class="card-item-name">${i.qty||i.cantidad||1}× ${i.name||i.nombre}</span>
+      <span class="card-item-price">$${(i.price||i.precio_unitario||0) * (i.qty||i.cantidad||1)}</span>
+    </div>
+  `).join('');
+
+  const actions = buildPedidoActions(p);
+  const chip = LABELS[p.estado] || p.estado;
+
+  return `
+    <div class="card-top">
+      <div>
+        <div class="estado-chip chip-${p.estado}">${chip}</div>
+        <div class="card-num">${p.numero_orden}</div>
+      </div>
+      <div class="card-time">${timeAgo(p.fecha_creacion)}</div>
+    </div>
+    <div class="card-client">${p.cliente_nombre}</div>
+    <div class="card-phone"><a href="tel:${p.cliente_telefono}">📞 ${p.cliente_telefono}</a></div>
+    <hr class="card-divider">
+    <div class="card-items">${itemsHtml}</div>
+    <div class="card-meta">
+      <div class="card-meta-row"><strong>📍</strong> ${p.cliente_direccion}</div>
+      ${p.cliente_notas ? `<div class="card-meta-row"><strong>📝</strong> ${p.cliente_notas}</div>` : ''}
+    </div>
+    <hr class="card-divider">
+    <div class="card-total"><span>Total</span><span>$${p.total} MXN</span></div>
+    ${actions ? `<div class="card-actions">${actions}</div>` : ''}
+  `;
+}
+
+function buildPedidoActions(p) {
+  const id = p.id;
+  switch(p.estado) {
+    case 'pendiente':
+      return `<button class="btn-action btn-prep" onclick="setPedidoEstado(${id},'en_preparacion')">🍳 Preparar</button>
+              <button class="btn-action btn-cancel" onclick="setPedidoEstado(${id},'cancelado')">✕ Cancelar</button>`;
+    case 'en_preparacion':
+      return `<button class="btn-action btn-listo" onclick="setPedidoEstado(${id},'listo')">✓ Listo para entregar</button>
+              <button class="btn-action btn-cancel" onclick="setPedidoEstado(${id},'cancelado')">✕ Cancelar</button>`;
+    case 'listo':
+      return `<button class="btn-action btn-camino" onclick="setPedidoEstado(${id},'en_camino')">🛵 En camino</button>`;
+    case 'en_camino':
+      return `<button class="btn-action btn-entregado" onclick="setPedidoEstado(${id},'entregado')">✓ Entregado</button>`;
+    default: return '';
+  }
+}
+
+async function setPedidoEstado(id, estado) {
+  try {
+    await api(`/api/pedidos/${id}`, { method:'PUT', body: JSON.stringify({ estado }) });
+    const p = pedidos.find(p => p.id === id);
+    if (p) { p.estado = estado; renderPedidos(); updateStats(); }
+  } catch(e) { toast('Error al actualizar pedido', 'err'); }
+}
+
+// ── RENDER RESERVACIONES ──────────────────────────────────────────
+function renderReservaciones() {
+  const sec   = document.getElementById('secReservaciones');
+  const empty = document.getElementById('emptyReservas');
+  const activas  = reservaciones.filter(r => !['no_presento','cancelada'].includes(r.estado));
+  const cerradas = reservaciones.filter(r =>  ['no_presento','cancelada'].includes(r.estado));
+  const lista    = [...activas, ...cerradas];
+
+  if (!lista.length) { empty.style.display = ''; sec.querySelectorAll('.card').forEach(c=>c.remove()); return; }
+  empty.style.display = 'none';
+
+  lista.forEach(r => {
+    let card = document.getElementById('card-r-' + r.id);
+    if (!card) { card = document.createElement('div'); card.id = 'card-r-' + r.id; sec.appendChild(card); }
+    card.className = `card estado-${r.estado}`;
+    card.innerHTML = buildReservaCard(r);
+  });
+
+  sec.querySelectorAll('.card').forEach(c => {
+    const id = parseInt(c.id.replace('card-r-',''));
+    if (!lista.find(r => r.id === id)) c.remove();
+  });
+
+  const n = activas.filter(r => r.estado === 'pendiente').length;
+  const b = document.getElementById('badgeReservas');
+  b.textContent = n; b.classList.toggle('on', n > 0);
+}
+
+function buildReservaCard(r) {
+  const chip    = LABELS[r.estado] || r.estado;
+  const actions = buildReservaActions(r);
+  const fecha   = new Date(r.fecha_reserva + 'T12:00:00').toLocaleDateString('es-MX', {weekday:'long',day:'numeric',month:'long'});
+
+  return `
+    <div class="card-top">
+      <div>
+        <div class="estado-chip chip-${r.estado}">${chip}</div>
+        <div class="card-num">${r.numero_reserva}</div>
+      </div>
+      <div class="card-time">${timeAgo(r.fecha_creacion)}</div>
+    </div>
+    <div class="card-client">${r.cliente_nombre}</div>
+    <div class="card-phone"><a href="tel:${r.cliente_telefono}">📞 ${r.cliente_telefono}</a></div>
+    <hr class="card-divider">
+    <div class="card-meta">
+      <div class="card-meta-row"><strong>📅</strong> ${fecha} a las ${r.hora_reserva}</div>
+      <div class="card-meta-row"><strong>👥</strong> ${r.numero_personas} persona${r.numero_personas>1?'s':''}</div>
+      ${r.mesa_preferencia ? `<div class="card-meta-row"><strong>🪑</strong> ${r.mesa_preferencia}</div>` : ''}
+      ${r.notas ? `<div class="card-meta-row"><strong>📝</strong> ${r.notas}</div>` : ''}
+      ${r.cliente_email ? `<div class="card-meta-row"><strong>✉️</strong> ${r.cliente_email}</div>` : ''}
+    </div>
+    ${actions ? `<div class="card-actions">${actions}</div>` : ''}
+  `;
+}
+
+function buildReservaActions(r) {
+  const id = r.id;
+  switch(r.estado) {
+    case 'pendiente':
+      return `<a class="btn-action btn-llamar" href="tel:${r.cliente_telefono}">📞 Llamar</a>
+              <button class="btn-action btn-confirmar" onclick="setReservaEstado(${id},'confirmada')">✓ Confirmar</button>
+              <button class="btn-action btn-cancel" onclick="setReservaEstado(${id},'cancelada')">✕</button>`;
+    case 'confirmada':
+      return `<button class="btn-action btn-cancel" onclick="setReservaEstado(${id},'no_presento')">✕ No se presentó</button>`;
+    default: return '';
+  }
+}
+
+async function setReservaEstado(id, estado) {
+  try {
+    await api(`/api/reservaciones/${id}`, { method:'PUT', body: JSON.stringify({ estado }) });
+    const r = reservaciones.find(r => r.id === id);
+    if (r) { r.estado = estado; renderReservaciones(); updateStats(); }
+  } catch(e) { toast('Error al actualizar reservación', 'err'); }
+}
+
+// ── STATS ─────────────────────────────────────────────────────────
+function updateStats() {
+  const hoy   = new Date().toISOString().slice(0,10);
+  document.getElementById('sNuevos').textContent  = pedidos.filter(p=>p.estado==='pendiente').length;
+  document.getElementById('sPrep').textContent    = pedidos.filter(p=>p.estado==='en_preparacion').length;
+  document.getElementById('sHoy').textContent     = pedidos.filter(p=>p.fecha_creacion.startsWith(hoy)).length;
+  document.getElementById('sRes').textContent     = reservaciones.filter(r=>r.estado==='pendiente').length;
+}
+
+// ── TABS ──────────────────────────────────────────────────────────
+function switchTab(tab) {
+  curTab = tab;
+  document.getElementById('tabBtnPedidos').classList.toggle('on', tab==='pedidos');
+  document.getElementById('tabBtnReservaciones').classList.toggle('on', tab==='reservaciones');
+  document.getElementById('secPedidos').classList.toggle('on', tab==='pedidos');
+  document.getElementById('secReservaciones').classList.toggle('on', tab==='reservaciones');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+function toast(msg, type='') {
+  const c  = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'tst ' + (type==='err'?'err':type==='ok'?'ok':'');
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+// ── AUTO-REFRESH ──────────────────────────────────────────────────
+// Por si el socket pierde conexión, refresca cada 60s
+setInterval(() => {
+  if (!TOKEN) return;
+  loadPedidos().catch(()=>{});
+  loadReservaciones().catch(()=>{});
+}, 60000);
+
+// ── ARRANCAR ──────────────────────────────────────────────────────
+// Si hay token guardado, intentar auto-login
+if (TOKEN) {
+  initAudio();
+  (async () => {
+    try {
+      const d = await api('/api/pedidos');
+      if (d.success) {
+        // Token válido — ir directo al panel
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('app').classList.add('on');
+        // Obtener nombre del token
+        try {
+          const payload = JSON.parse(atob(TOKEN.split('.')[1]));
+          document.getElementById('hdrUser').textContent = payload.nombre || 'Admin';
+        } catch(e) {}
+        connectSocket();
+        pedidos = d.pedidos;
+        renderPedidos(); updateStats();
+        await loadReservaciones();
+      }
+    } catch(e) {
+      TOKEN = ''; localStorage.removeItem('tg_token');
+    }
+  })();
+}
+</script>
+</body>
+</html>

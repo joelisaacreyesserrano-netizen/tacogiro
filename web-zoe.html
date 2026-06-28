@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZOE — Extracto Herbal Natural</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #060D08;
+      --bg2:      #0C1810;
+      --bg3:      #111D13;
+      --gold:     #C49A2A;
+      --gold-lt:  #E2B848;
+      --gold-dim: rgba(196,154,42,0.14);
+      --green:    #2E6B3E;
+      --text:     #EDE8DC;
+      --muted:    #6E7868;
+      --border:   rgba(196,154,42,0.18);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 22px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: padding .4s, background .4s, border-color .4s;
+    }
+    nav.scrolled {
+      padding: 14px 48px;
+      background: rgba(6,13,8,.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; letter-spacing: .35em;
+      color: var(--gold-lt); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: .7rem; letter-spacing: .14em; text-transform: uppercase;
+      transition: color .3s;
+    }
+    .nav-links a:hover { color: var(--gold-lt); }
+    .nav-cta {
+      padding: 10px 24px !important;
+      border: 1px solid var(--gold) !important;
+      color: var(--gold) !important;
+      border-radius: 2px;
+      transition: background .3s, color .3s !important;
+    }
+    .nav-cta:hover { background: var(--gold) !important; color: var(--bg) !important; }
+    .nav-toggle {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; background: none; border: none; padding: 4px;
+    }
+    .nav-toggle span { display: block; width: 22px; height: 1.5px; background: var(--text); transition: .3s; }
+    .nav-mobile-open .nav-links {
+      display: flex; flex-direction: column; position: fixed;
+      top: 60px; left: 0; right: 0;
+      background: rgba(6,13,8,.97); backdrop-filter: blur(20px);
+      padding: 28px 24px; border-bottom: 1px solid var(--border);
+      gap: 24px; z-index: 199;
+    }
+
+    /* ── HERO SCROLL-VIDEO ── */
+    .hero-section { height: 500vh; position: relative; }
+    .hero-sticky {
+      position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden;
+    }
+    .hero-sticky video {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(to bottom, rgba(6,13,8,.25) 0%, rgba(6,13,8,.5) 55%, rgba(6,13,8,.88) 100%);
+    }
+    .hero-content {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 0 24px;
+    }
+    .hero-eyebrow {
+      font-size: .65rem; letter-spacing: .45em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 24px; opacity: .9;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.4rem, 8vw, 7.5rem);
+      font-weight: 300; line-height: 1.04; margin-bottom: 20px;
+    }
+    .hero-title em { font-style: italic; color: var(--gold-lt); }
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.2vw, 1.45rem); font-weight: 300; font-style: italic;
+      color: rgba(237,232,220,.68); max-width: 500px; margin-bottom: 48px; line-height: 1.55;
+    }
+    .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .btn-gold {
+      padding: 16px 40px; background: var(--gold); color: var(--bg);
+      text-decoration: none; font-size: .72rem; font-weight: 500;
+      letter-spacing: .14em; text-transform: uppercase; border-radius: 2px;
+      border: 1px solid var(--gold); transition: all .3s;
+    }
+    .btn-gold:hover { background: var(--gold-lt); border-color: var(--gold-lt); transform: translateY(-2px); }
+    .btn-outline {
+      padding: 16px 40px; border: 1px solid rgba(237,232,220,.25); color: var(--text);
+      text-decoration: none; font-size: .72rem; letter-spacing: .14em;
+      text-transform: uppercase; border-radius: 2px; transition: all .3s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+    .progress-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: rgba(255,255,255,.08); z-index: 3; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), var(--gold-lt)); transition: width .05s linear; }
+    .scroll-hint {
+      position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
+      z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      color: rgba(237,232,220,.35); font-size: .6rem; letter-spacing: .25em; text-transform: uppercase;
+    }
+    .scroll-line { width: 1px; height: 36px; background: linear-gradient(to bottom, transparent, rgba(196,154,42,.55)); animation: pulse 2.2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{ opacity:.3; } 50%{ opacity:1; } }
+
+    /* ── REVEAL ANIMATIONS ── */
+    .reveal       { opacity:0; transform: translateY(36px); transition: opacity .85s ease, transform .85s ease; }
+    .reveal-l     { opacity:0; transform: translateX(-36px); transition: opacity .9s ease, transform .9s ease; }
+    .reveal-r     { opacity:0; transform: translateX(36px); transition: opacity .9s ease, transform .9s ease; }
+    .reveal-s     { opacity:0; transform: scale(.93); transition: opacity .8s ease, transform .8s ease; }
+    .visible      { opacity:1 !important; transform: none !important; }
+    .d1 { transition-delay: .1s !important; }
+    .d2 { transition-delay: .2s !important; }
+    .d3 { transition-delay: .3s !important; }
+    .d4 { transition-delay: .4s !important; }
+    .d5 { transition-delay: .5s !important; }
+    .d6 { transition-delay: .6s !important; }
+    .d7 { transition-delay: .7s !important; }
+
+    /* ── SHARED ── */
+    .eyebrow { display: block; font-size: .62rem; letter-spacing: .45em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+    .sec-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 4.5vw, 4.2rem); font-weight: 300; line-height: 1.1; margin-bottom: 24px;
+    }
+    .sec-title em { font-style: italic; color: var(--gold-lt); }
+    .sec-body { font-size: .95rem; line-height: 1.9; color: rgba(237,232,220,.66); }
+    .divider-gold { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+    /* ── HISTORIA ── */
+    .historia-wrap { background: var(--bg2); }
+    .historia-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+      max-width: 1200px; margin: 0 auto; padding: 120px 48px;
+    }
+    .img-frame { position: relative; }
+    .img-frame::before {
+      content: ''; position: absolute; top: -14px; left: -14px; right: 14px; bottom: 14px;
+      border: 1px solid var(--border); border-radius: 2px; pointer-events: none;
+    }
+    .img-frame img { position: relative; z-index: 1; width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 2px; display: block; }
+    .img-badge {
+      position: absolute; bottom: -18px; right: -18px; z-index: 2;
+      width: 96px; height: 96px; border-radius: 50%; background: var(--gold);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    }
+    .img-badge b { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; color: var(--bg); line-height: 1; }
+    .img-badge small { font-size: .45rem; letter-spacing: .12em; text-transform: uppercase; color: var(--bg); margin-top: 2px; }
+    .historia-quote {
+      border-left: 2px solid var(--gold); padding-left: 22px; margin: 28px 0 28px;
+      font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-style: italic;
+      font-weight: 300; color: rgba(237,232,220,.82); line-height: 1.65;
+    }
+
+    /* ── BENEFICIOS ── */
+    .bene-header { max-width: 1200px; margin: 0 auto; padding: 120px 48px 60px; }
+    .bene-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+    .bene-card { position: relative; overflow: hidden; aspect-ratio: 3/4; }
+    .bene-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s ease, filter .7s ease; filter: brightness(.7) saturate(.75); }
+    .bene-card:hover img { transform: scale(1.06); filter: brightness(.55) saturate(.5); }
+    .bene-card-inner {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(6,13,8,.92) 0%, rgba(6,13,8,.1) 55%);
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 36px 30px;
+    }
+    .bene-num { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 300; color: rgba(196,154,42,.2); line-height: 1; }
+    .bene-title { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 600; color: var(--text); margin: 6px 0 10px; line-height: 1.2; }
+    .bene-desc { font-size: .8rem; line-height: 1.75; color: rgba(237,232,220,.62); font-weight: 300; }
+
+    /* ── INGREDIENTES ── */
+    .ing-wrap { background: var(--bg3); position: relative; }
+    .ing-inner { max-width: 1200px; margin: 0 auto; padding: 120px 48px; }
+    .ing-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-bottom: 72px; }
+    .ing-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; }
+    .ing-item {
+      text-align: center; padding: 28px 10px;
+      border: 1px solid var(--border); border-radius: 4px;
+      background: rgba(196,154,42,.04); transition: all .4s ease; cursor: default;
+    }
+    .ing-item:hover { border-color: var(--gold); background: rgba(196,154,42,.1); transform: translateY(-8px); }
+    .ing-icon { font-size: 1.9rem; margin-bottom: 10px; display: block; }
+    .ing-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; display: block; margin-bottom: 5px; }
+    .ing-note { font-size: .67rem; color: var(--muted); line-height: 1.5; }
+    .ing-base {
+      margin-top: 40px; padding: 24px 32px;
+      border: 1px solid var(--border); border-radius: 4px;
+      display: flex; align-items: center; gap: 24px; background: rgba(46,107,62,.07);
+    }
+    .ing-base-label { font-size: .6rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
+    .ing-base-val { font-size: .82rem; color: rgba(237,232,220,.6); }
+
+    /* ── PRODUCTO ── */
+    .prod-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center;
+      max-width: 1200px; margin: 0 auto; padding: 120px 48px;
+    }
+    .prod-visual { position: relative; display: flex; justify-content: center; }
+    .prod-glow { position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(196,154,42,.14), transparent); border-radius: 50%; }
+    .prod-img { position: relative; z-index: 1; width: 100%; max-width: 400px; aspect-ratio: 2/3; object-fit: cover; border-radius: 4px; }
+    .prod-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.6rem, 4.5vw, 4rem); font-weight: 300; line-height: 1.1; margin-bottom: 8px; }
+    .prod-name em { font-style: italic; color: var(--gold-lt); }
+    .prod-sub { font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; }
+    .prod-desc { font-size: .9rem; line-height: 1.9; color: rgba(237,232,220,.65); margin-bottom: 36px; }
+    .prod-price-box {
+      display: flex; align-items: center; gap: 18px;
+      padding: 26px 28px; border: 1px solid var(--border); border-radius: 4px;
+      background: rgba(196,154,42,.05); margin-bottom: 36px;
+    }
+    .prod-price { font-family: 'Cormorant Garamond', serif; font-size: 3.2rem; font-weight: 600; color: var(--gold-lt); line-height: 1; }
+    .prod-price-detail { font-size: .75rem; color: var(--muted); line-height: 1.55; }
+    .prod-price-detail strong { display: block; font-size: .9rem; color: var(--text); margin-bottom: 2px; font-weight: 400; }
+    .prod-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    /* ── TESTIMONIO ── */
+    .test-wrap { background: var(--bg2); border-top: 1px solid var(--border); }
+    .test-inner { max-width: 780px; margin: 0 auto; padding: 120px 48px; text-align: center; }
+    .test-deco { font-family: 'Cormorant Garamond', serif; font-size: 9rem; font-weight: 300; color: rgba(196,154,42,.1); line-height: .6; display: block; margin-bottom: 24px; }
+    .test-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.3rem, 2.8vw, 2.1rem); font-weight: 300; font-style: italic; line-height: 1.65; color: rgba(237,232,220,.87); margin-bottom: 44px; }
+    .test-line { width: 38px; height: 1px; background: var(--gold); margin: 0 auto 22px; }
+    .test-author { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+    .test-role { font-size: .75rem; color: var(--muted); margin-top: 6px; font-style: italic; }
+
+    /* ── CONTACTO ── */
+    .cont-wrap { border-top: 1px solid var(--border); }
+    .cont-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start;
+      max-width: 1200px; margin: 0 auto; padding: 120px 48px;
+    }
+    .cont-links { display: flex; flex-direction: column; gap: 14px; margin-top: 44px; }
+    .cont-link {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 22px; border: 1px solid var(--border); border-radius: 4px;
+      text-decoration: none; color: var(--text); background: rgba(196,154,42,.03);
+      transition: all .3s;
+    }
+    .cont-link:hover { border-color: var(--gold); background: rgba(196,154,42,.08); transform: translateX(5px); }
+    .cont-icon {
+      width: 40px; height: 40px; border-radius: 50%; background: rgba(196,154,42,.1);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .cont-icon svg { width: 17px; height: 17px; fill: var(--gold); }
+    .cont-lbl { font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
+    .cont-val { font-size: .92rem; }
+    .form { display: flex; flex-direction: column; gap: 14px; }
+    .f-field { display: flex; flex-direction: column; gap: 7px; }
+    .f-field label { font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .f-field input, .f-field textarea {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 2px;
+      padding: 13px 17px; color: var(--text); font-family: 'Inter', sans-serif;
+      font-size: .88rem; font-weight: 300; outline: none; resize: vertical;
+      transition: border-color .3s;
+    }
+    .f-field input:focus, .f-field textarea:focus { border-color: var(--gold); }
+    .f-field input::placeholder, .f-field textarea::placeholder { color: var(--muted); }
+    .f-submit {
+      padding: 15px 36px; background: var(--gold); color: var(--bg);
+      border: none; border-radius: 2px; font-family: 'Inter', sans-serif;
+      font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+      cursor: pointer; transition: all .3s; margin-top: 6px; align-self: flex-start;
+    }
+    .f-submit:hover { background: var(--gold-lt); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 36px 48px; }
+    .foot-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .foot-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; letter-spacing: .35em; color: var(--gold); text-decoration: none; }
+    .foot-copy { font-size: .7rem; color: var(--muted); }
+    .foot-social { display: flex; gap: 12px; }
+    .foot-social a {
+      width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; color: var(--muted);
+      text-decoration: none; transition: all .3s;
+    }
+    .foot-social a:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-3px); }
+    .foot-social svg { width: 13px; height: 13px; fill: currentColor; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      nav.scrolled { padding: 13px 20px; }
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .nav-mobile-open .nav-links { display: flex; }
+      .hero-section { height: 100vh; }
+      .hero-sticky { position: relative; }
+      .historia-grid { grid-template-columns: 1fr; gap: 48px; padding: 80px 20px; }
+      .img-frame::before { display: none; }
+      .bene-header { padding: 80px 20px 40px; }
+      .bene-grid { grid-template-columns: 1fr; gap: 3px; }
+      .bene-card { aspect-ratio: 4/3; }
+      .ing-inner { padding: 80px 20px; }
+      .ing-header { flex-direction: column; }
+      .ing-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+      .prod-grid { grid-template-columns: 1fr; gap: 48px; padding: 80px 20px; }
+      .test-inner { padding: 80px 20px; }
+      .cont-grid { grid-template-columns: 1fr; gap: 60px; padding: 80px 20px; }
+      footer { padding: 28px 20px; }
+    }
+    @media (max-width: 480px) {
+      .ing-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-section { height: 100vh; }
+      .reveal, .reveal-l, .reveal-r, .reveal-s { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">ZOE</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#historia">Historia</a></li>
+    <li><a href="#beneficios">Beneficios</a></li>
+    <li><a href="#ingredientes">Ingredientes</a></li>
+    <li><a href="#producto">Producto</a></li>
+    <li><a href="#contacto" class="nav-cta">Pedir ahora</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<div class="hero-section" id="heroSection">
+  <div class="hero-sticky">
+    <video id="heroVideo" src="assets/hero.mp4" playsinline muted preload="auto"></video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-eyebrow">Suplemento alimenticio · 100% natural</span>
+      <h1 class="hero-title">La naturaleza<br><em>en su forma</em><br>más pura</h1>
+      <p class="hero-subtitle">Extracto herbal vital elaborado con 7 ingredientes seleccionados que la naturaleza nos ha dado siempre</p>
+      <div class="hero-btns">
+        <a href="#producto" class="btn-gold">Conoce ZOE</a>
+        <a href="#historia" class="btn-outline">Nuestra historia</a>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="scroll-hint"><span>Desliza</span><div class="scroll-line"></div></div>
+  </div>
+</div>
+
+<div class="divider-gold"></div>
+
+<!-- HISTORIA -->
+<div id="historia" class="historia-wrap">
+  <div class="historia-grid">
+    <div class="reveal-l">
+      <div class="img-frame">
+        <img src="assets/producto-uso.jpeg" alt="Usando Extracto Vital ZOE">
+        <div class="img-badge"><b>7</b><small>ingredientes naturales</small></div>
+      </div>
+    </div>
+    <div class="reveal-r">
+      <span class="eyebrow">El origen de ZOE</span>
+      <h2 class="sec-title">Una fórmula nacida<br>de la <em>necesidad real</em></h2>
+      <blockquote class="historia-quote">
+        "Llevaba años con problemas respiratorios que ningún tratamiento lograba resolver del todo. Decidí buscar en la naturaleza lo que la medicina convencional no me daba."
+      </blockquote>
+      <p class="sec-body">
+        El creador de la fórmula ZOE combinó ingredientes que la sabiduría popular y la botánica llevan siglos usando. Tras experimentar una mejora significativa en su propia salud respiratoria, supo que esta mezcla debía llegar a más personas. Así nació ZOE — un extracto vital elaborado con cuidado, respeto por la naturaleza y convicción profunda en sus beneficios.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="divider-gold"></div>
+
+<!-- BENEFICIOS -->
+<section id="beneficios" style="padding:0; max-width:100%;">
+  <div class="bene-header">
+    <span class="eyebrow reveal">Lo que ZOE hace por ti</span>
+    <h2 class="sec-title reveal">Tres razones para<br><em>elegir lo natural</em></h2>
+  </div>
+  <div class="bene-grid">
+    <div class="bene-card reveal d1">
+      <img src="assets/beneficio-1.jpeg" alt="Sistema inmunológico">
+      <div class="bene-card-inner">
+        <div class="bene-num">01</div>
+        <h3 class="bene-title">Sistema Inmunológico</h3>
+        <p class="bene-desc">Ingredientes con propiedades antimicrobianas y antioxidantes que refuerzan tus defensas naturales día a día.</p>
+      </div>
+    </div>
+    <div class="bene-card reveal d2">
+      <img src="assets/beneficio-5.jpeg" alt="Energía vital">
+      <div class="bene-card-inner">
+        <div class="bene-num">02</div>
+        <h3 class="bene-title">Energía Vital</h3>
+        <p class="bene-desc">Jengibre, cúrcuma y pimienta negra activan tu metabolismo y te brindan el empuje que necesitas cada día.</p>
+      </div>
+    </div>
+    <div class="bene-card reveal d3">
+      <img src="assets/beneficio-2.jpeg" alt="Circulación">
+      <div class="bene-card-inner">
+        <div class="bene-num">03</div>
+        <h3 class="bene-title">Circulación</h3>
+        <p class="bene-desc">Ajo y cebolla morada contribuyen a la salud cardiovascular, apoyando una circulación saludable y activa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider-gold" style="margin-top:3px;"></div>
+
+<!-- INGREDIENTES -->
+<div id="ingredientes" class="ing-wrap">
+  <div class="ing-inner">
+    <div class="ing-header">
+      <div>
+        <span class="eyebrow reveal">Composición</span>
+        <h2 class="sec-title reveal">7 ingredientes.<br><em>Una fórmula.</em></h2>
+      </div>
+      <p class="sec-body reveal" style="max-width:340px;">Cada ingrediente fue elegido por sus propiedades documentadas, no por tendencia. Juntos forman una sinergia única.</p>
+    </div>
+    <div class="ing-grid">
+      <div class="ing-item reveal d1"><span class="ing-icon">🧄</span><span class="ing-name">Ajo</span><span class="ing-note">Antimicrobiano natural · cardiovascular</span></div>
+      <div class="ing-item reveal d2"><span class="ing-icon">🧅</span><span class="ing-name">Cebolla morada</span><span class="ing-note">Rica en quercetina · antioxidante</span></div>
+      <div class="ing-item reveal d3"><span class="ing-icon">🍋</span><span class="ing-name">Cáscara de limón</span><span class="ing-note">Vitamina C · flavonoides</span></div>
+      <div class="ing-item reveal d4"><span class="ing-icon">🫚</span><span class="ing-name">Jengibre</span><span class="ing-note">Antiinflamatorio · digestivo</span></div>
+      <div class="ing-item reveal d5"><span class="ing-icon">🌿</span><span class="ing-name">Orégano</span><span class="ing-note">Antimicrobiano · antifúngico</span></div>
+      <div class="ing-item reveal d6"><span class="ing-icon">⚫</span><span class="ing-name">Pimienta negra</span><span class="ing-note">Potencia absorción de nutrientes</span></div>
+      <div class="ing-item reveal d7"><span class="ing-icon">🟡</span><span class="ing-name">Cúrcuma</span><span class="ing-note">Antiinflamatorio · antioxidante</span></div>
+    </div>
+    <div class="ing-base reveal">
+      <span class="ing-base-label">Base del extracto</span>
+      <span class="ing-base-val">Alcohol &nbsp;·&nbsp; Glicerina vegetal &nbsp;·&nbsp; Agua destilada</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider-gold"></div>
+
+<!-- PRODUCTO -->
+<section id="producto" style="padding:0; max-width:100%;">
+  <div class="prod-grid">
+    <div class="prod-visual reveal-l">
+      <div class="prod-glow"></div>
+      <img src="assets/producto-uso.jpeg" alt="Extracto Vital ZOE 60ml" class="prod-img">
+    </div>
+    <div class="reveal-r">
+      <span class="eyebrow">Extracto Vital ZOE</span>
+      <h2 class="prod-name">Gotero de<br><em>60 ml</em></h2>
+      <p class="prod-sub">Suplemento alimenticio · 100% natural</p>
+      <p class="prod-desc">Presentado en un práctico gotero de 60 ml para una dosificación cómoda y precisa. Elaborado con ingredientes deshidratados de alta calidad en una base de alcohol, glicerina vegetal y agua destilada.</p>
+      <div class="prod-price-box">
+        <span class="prod-price">$499</span>
+        <div class="prod-price-detail">
+          <strong>Precio por frasco</strong>
+          Pesos mexicanos &nbsp;·&nbsp; Gotero 60 ml
+        </div>
+      </div>
+      <div class="prod-actions">
+        <a href="https://wa.me/526311115698?text=Hola%2C%20me%20interesa%20el%20Extracto%20Vital%20ZOE%20de%2060%20ml.%20%C2%BFC%C3%B3mo%20puedo%20pedirlo%3F" class="btn-gold" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+        <a href="#contacto" class="btn-outline">Más información</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider-gold"></div>
+
+<!-- TESTIMONIO -->
+<div class="test-wrap">
+  <div class="test-inner">
+    <span class="test-deco reveal">"</span>
+    <blockquote class="test-quote reveal">
+      Llevaba años padeciendo problemas respiratorios que me afectaban día a día. Decidí combinar lo que la naturaleza siempre nos ha dado — ajo, jengibre, cúrcuma — y en pocas semanas noté un cambio que ningún otro tratamiento me había dado. Esa experiencia fue el inicio de ZOE.
+    </blockquote>
+    <div class="test-line reveal"></div>
+    <p class="test-author reveal">El Fundador</p>
+    <p class="test-role reveal">Creador de la fórmula ZOE</p>
+  </div>
+</div>
+
+<div class="divider-gold"></div>
+
+<!-- CONTACTO -->
+<section id="contacto" class="cont-wrap" style="padding:0; max-width:100%;">
+  <div class="cont-grid">
+    <div class="reveal-l">
+      <span class="eyebrow">Hablemos</span>
+      <h2 class="sec-title">¿Listo para sentir<br><em>la diferencia</em>?</h2>
+      <p class="sec-body">Escríbenos por cualquier canal. Estamos aquí para resolver todas tus dudas sobre ZOE.</p>
+      <div class="cont-links">
+        <a href="https://wa.me/526311115698" class="cont-link" target="_blank" rel="noopener">
+          <div class="cont-icon"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+          <div><span class="cont-lbl">WhatsApp</span><span class="cont-val">631 111 5698</span></div>
+        </a>
+        <a href="tel:6311115698" class="cont-link">
+          <div class="cont-icon"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C9.6 21 3 14.4 3 6c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.5 1.2z"/></svg></div>
+          <div><span class="cont-lbl">Teléfono</span><span class="cont-val">631 111 5698</span></div>
+        </a>
+        <a href="mailto:extractovitalzoe@gmail.com" class="cont-link">
+          <div class="cont-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+          <div><span class="cont-lbl">Correo</span><span class="cont-val">extractovitalzoe@gmail.com</span></div>
+        </a>
+        <a href="https://instagram.com/extractonaturalzoe" class="cont-link" target="_blank" rel="noopener">
+          <div class="cont-icon"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
+          <div><span class="cont-lbl">Instagram</span><span class="cont-val">@extractonaturalzoe</span></div>
+        </a>
+      </div>
+    </div>
+    <div class="reveal-r">
+      <form class="form" id="contactForm">
+        <div class="f-field"><label for="nombre">Nombre</label><input type="text" id="nombre" placeholder="Tu nombre" required></div>
+        <div class="f-field"><label for="telefono">Teléfono</label><input type="tel" id="telefono" placeholder="Tu número"></div>
+        <div class="f-field"><label for="emailInput">Correo electrónico</label><input type="email" id="emailInput" placeholder="tu@correo.com"></div>
+        <div class="f-field"><label for="mensaje">Mensaje</label><textarea id="mensaje" rows="4" placeholder="¿Cómo podemos ayudarte?"></textarea></div>
+        <button type="submit" class="f-submit">Enviar por WhatsApp</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <a href="#" class="foot-logo">ZOE</a>
+    <p class="foot-copy">© 2026 Extracto Vital ZOE &nbsp;·&nbsp; Suplemento alimenticio natural &nbsp;·&nbsp; México</p>
+    <div class="foot-social">
+      <a href="https://instagram.com/extractonaturalzoe" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      </a>
+      <a href="https://wa.me/526311115698" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// NAV
+const nav = document.getElementById('nav');
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+navToggle.addEventListener('click', () => {
+  nav.classList.toggle('nav-mobile-open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => nav.classList.remove('nav-mobile-open'));
+});
+
+// SCROLL VIDEO
+(function () {
+  const video = document.getElementById('heroVideo');
+  const hero  = document.getElementById('heroSection');
+  const fill  = document.getElementById('progressFill');
+  if (!video || !hero) return;
+
+  const mobile  = window.matchMedia('(max-width: 768px)').matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (mobile || reduced) {
+    video.autoplay = true; video.loop = true;
+    video.play().catch(() => {});
+    return;
+  }
+
+  video.pause(); video.currentTime = 0;
+  let ready = false;
+  video.addEventListener('loadedmetadata', () => { ready = true; });
+  video.load();
+
+  function update() {
+    if (!ready || !video.duration) return;
+    const rect     = hero.getBoundingClientRect();
+    const scrolled = -rect.top;
+    const total    = hero.offsetHeight - window.innerHeight;
+    if (scrolled <= 0) { video.currentTime = 0; fill.style.width = '0%'; return; }
+    if (scrolled >= total) { video.currentTime = video.duration; fill.style.width = '100%'; return; }
+    const p = scrolled / total;
+    video.currentTime = p * video.duration;
+    fill.style.width = (p * 100) + '%';
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(() => { update(); ticking = false; }); ticking = true; }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+})();
+
+// REVEAL
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-l, .reveal-r, .reveal-s').forEach(el => obs.observe(el));
+
+// PARALLAX ingredientes
+(function () {
+  const sec = document.querySelector('.ing-wrap');
+  if (!sec) return;
+  window.addEventListener('scroll', () => {
+    const r = sec.getBoundingClientRect();
+    const p = (window.innerHeight - r.top) / (window.innerHeight + r.height);
+    sec.style.backgroundPositionY = `calc(50% + ${(p - 0.5) * 40}px)`;
+  }, { passive: true });
+})();
+
+// FORM → WhatsApp
+document.getElementById('contactForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const nombre  = document.getElementById('nombre').value;
+  const tel     = document.getElementById('telefono').value;
+  const mensaje = document.getElementById('mensaje').value;
+  const txt = `Hola, mi nombre es ${nombre}.${tel ? ' Mi teléfono: ' + tel + '.' : ''} ${mensaje}`;
+  window.open('https://wa.me/526311115698?text=' + encodeURIComponent(txt), '_blank');
+});
+</script>
+</body>
+</html>

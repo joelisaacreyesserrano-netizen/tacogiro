@@ -1,0 +1,6 @@
+node_modules/
+tacogiro-db.json
+*.tmp
+.DS_Store
+assets/hero.mp4
+assets/hero-main.mov
